@@ -20,7 +20,8 @@
  * @subpackage Amfm_Bylines/admin
  * @author     Adrian T. Saycon <adzbite@gmail.com>
  */
-class Amfm_Bylines_Admin {
+class Amfm_Bylines_Admin
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,11 +48,11 @@ class Amfm_Bylines_Admin {
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct($plugin_name, $version)
+	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -59,7 +60,8 @@ class Amfm_Bylines_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -73,9 +75,8 @@ class Amfm_Bylines_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( 'bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css', array(), '5.1.3', 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/amfm-bylines-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css', array(), '5.2.3', 'all');
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-admin.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -83,7 +84,8 @@ class Amfm_Bylines_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -95,11 +97,37 @@ class Amfm_Bylines_Admin {
 		 * The Amfm_Bylines_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
-		*/
+		 */
 
-	    wp_enqueue_script( 'bootstrap-js', 'https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js', array( 'jquery' ), '5.1.3', true );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/amfm-bylines-admin.js', array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js', array('jquery'), '5.2.3', true);
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-admin.js', array('jquery'), $this->version, false);
 	}
 
+	/**
+	 * Register the admin menu.
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_admin_menu()
+	{
+		add_menu_page(
+			__('AMFM Bylines', 'amfm-bylines'), // Page title
+			__('AMFM Bylines', 'amfm-bylines'), // Menu title
+			'manage_options', // Capability
+			'amfm-bylines', // Menu slug
+			array($this, 'display_admin_page'), // Callback function
+			'dashicons-admin-generic', // Icon
+			2 // Position
+		);
+	}
+
+	/**
+	 * Display the admin page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_admin_page()
+	{
+		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-admin-display.php';
+	}
 }
