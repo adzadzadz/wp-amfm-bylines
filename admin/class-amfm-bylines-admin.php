@@ -96,7 +96,7 @@ class Amfm_Bylines_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/amfm-bylines-admin.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/amfm-bylines-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
