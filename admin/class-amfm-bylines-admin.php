@@ -73,6 +73,7 @@ class Amfm_Bylines_Admin {
 		 * class.
 		 */
 
+		wp_enqueue_style( 'bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css', array(), '5.1.3', 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/amfm-bylines-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -94,9 +95,10 @@ class Amfm_Bylines_Admin {
 		 * The Amfm_Bylines_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
-		 */
+		*/
 
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/amfm-bylines-admin.js', array( 'jquery' ), $this->version, false );
+	    wp_enqueue_script( 'bootstrap-js', 'https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js', array( 'jquery' ), '5.1.3', true );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/amfm-bylines-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
