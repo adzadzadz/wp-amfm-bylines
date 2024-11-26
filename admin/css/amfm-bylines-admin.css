@@ -3,6 +3,15 @@
  * included in this file.
  */
 
+.amfm-border-bottom {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.amfm-btn-tag {
+    margin-right: 5px;
+}
+
 .amfm-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     padding: 0 !important;

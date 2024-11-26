@@ -100,4 +100,90 @@ class Amfm_Bylines_Public {
 
 	}
 
+	public function manage_bylines_schema()
+	{
+		add_filter('rank_math/json_ld', function ($data, $jsonld) {
+			if (is_singular('post')) {
+
+				// get all bylines from database
+				global $wpdb;
+				$table_name = $wpdb->prefix . 'amfm_bylines';
+				$bylines = $wpdb->get_results("SELECT * FROM $table_name");
+
+				// Build the author array and should contain bylines with author tags
+				$author_schema = array();
+				$editor_schema = array();
+				$reviewedBy_schema = array();
+
+				foreach ($bylines as $byline) {
+					$byline_data = json_decode($byline->data, true);
+
+					if (has_tag($byline_data['authorTag'])) {
+						$author_schema = array(
+							'@type' => 'Person',
+							'url' => $byline_data['page_url'],
+							'image' => $byline->profile_image,
+							'name' => $byline->byline_name,
+							'honorificSuffix' => $byline_data['honorificSuffix'],
+							'description' => $byline->description,
+							'jobTitle' => $byline_data['jobTitle'],
+							'hasCredential' => array(
+								'@type' => $byline_data['hasCredential']['@type'],
+								'name' => $byline_data['hasCredential']['name']
+							),
+							'worksFor' => array(
+								'@type' => $byline_data['worksFor']['@type'],
+								'name' => $byline_data['worksFor']['name']
+							)
+						);
+					}
+
+					if (has_tag($byline_data['editorTag'])) {
+						$editor_schema = array(
+							'@type' => 'Person',
+							'url' => $byline_data['page_url'],
+							'image' => $byline->profile_image,
+							'name' => $byline->byline_name,
+							'honorificSuffix' => $byline_data['honorificSuffix'],
+							'description' => $byline->description,
+							'jobTitle' => $byline_data['jobTitle'],
+							'hasCredential' => array(
+								'@type' => $byline_data['hasCredential']['@type'],
+								'name' => $byline_data['hasCredential']['name']
+							),
+							'worksFor' => array(
+								'@type' => $byline_data['worksFor']['@type'],
+								'name' => $byline_data['worksFor']['name']
+							)
+						);
+					}
+				}
+
+				foreach ($data as $key => $schema) {
+					if (isset($schema['@type']) && ($schema['@type'] === 'Article' || $schema['@type'] === 'MedicalWebPage')) {
+						if (isset($data[$key]['author'])) {
+							unset($data[$key]['author']);
+						}
+
+						if (!empty($author_schema)) {
+							$data[$key]['author'] = $author_schema;
+						}
+
+						if (!empty($editor_schema)) {
+							$data[$key]['editor'] = $editor_schema;
+						}
+
+						if (!empty($reviewedBy_schema) && isset($data[$key]['@type']) && $data[$key]['@type'] === 'MedicalWebPage') {
+							$data[$key]['reviewedBy'] = $reviewedBy_schema;
+						}
+					}
+				}
+
+				return $data;
+
+			}
+		}, 99, 2);
+		
+	}
+
 }

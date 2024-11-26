@@ -80,3 +80,6 @@ function run_amfm_bylines() {
 
 }
 run_amfm_bylines();
+
+// add these tags to the amfm_bylines_tags option ['author_tags' => ['authored-by-aja-chavez', 'authored-by-jason-shipley', 'authored-by-fernanda-perez-rios'], 'editor_tags' => ['edited-by-aja-chavez', 'edited-by-jason-shipley', 'edited-by-fernanda-perez-rios'], 'reviewed_by_tags' => []]
+// update_option('amfm_bylines_tags', ['author_tags' => ['authored-by-aja-chavez', 'authored-by-jason-shipley', 'authored-by-fernanda-perez-rios'], 'editor_tags' => ['edited-by-aja-chavez', 'edited-by-jason-shipley', 'edited-by-fernanda-perez-rios'], 'reviewed_by_tags' => []]);

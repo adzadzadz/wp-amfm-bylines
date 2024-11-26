@@ -76,7 +76,7 @@ class Amfm_Bylines_Admin
 		 */
 
 		wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css', array(), '5.2.3', 'all');
-		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-admin.css', array(), random_int(000,999), 'all');
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-admin.css', array(), random_int(000, 999), 'all');
 	}
 
 	/**
@@ -98,10 +98,16 @@ class Amfm_Bylines_Admin
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		
+
 		wp_enqueue_media();
 		wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js', array('jquery'), '5.2.3', true);
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-admin.js', array('jquery'), random_int(000,999), false);
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-admin.js', array('jquery'), random_int(000, 999), false);
+		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
+			'ajax_url' => admin_url('admin-ajax.php'),
+			'pageSelectorNonce' => wp_create_nonce('amfm_page_selector_nonce'),
+			'saveBylineNonce' => wp_create_nonce('amfm_save_byline_nonce'),
+			'deleteBylineNonce' => wp_create_nonce('amfm_delete_byline_nonce')
+		));
 	}
 
 	/**
@@ -131,4 +137,124 @@ class Amfm_Bylines_Admin
 	{
 		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-admin-display.php';
 	}
+
+	public function fetch_pages()
+	{
+		check_ajax_referer('amfm_page_selector_nonce', 'nonce');
+
+		$pages = get_pages(array(
+			'post_type' => 'page',
+			'post_status' => 'publish'
+		));
+
+		$response = array();
+		foreach ($pages as $page) {
+			$response[] = array(
+				'ID' => $page->ID,
+				'title' => $page->post_title,
+				'link' => get_permalink($page->ID)
+			);
+		}
+
+		wp_send_json_success($response);
+	}
+
+	public function save_amfm_bylines() {
+		if (!isset($_POST['nonce'])) {
+			wp_send_json_error('Nonce not set', 403);
+			wp_die();
+		}
+	
+		if (!wp_verify_nonce($_POST['nonce'], 'amfm_save_byline_nonce')) {
+			wp_send_json_error('Nonce verification failed', 403);
+			wp_die();
+		}
+	
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'amfm_bylines';
+	
+		parse_str($_POST['form_data'], $form_data);
+	
+		// Sanitize and collect the inputs
+		$byline_name = sanitize_text_field($form_data['name']);
+		$profile_image = esc_url_raw($form_data['image_url']);
+		$description = sanitize_textarea_field($form_data['description']);
+		$type = 'Default';
+	
+		// Collect other inputs
+		$other_data = array(
+			'page_url' => esc_url_raw($form_data['page_url']),
+			'honorificSuffix' => sanitize_text_field($form_data['honorificSuffix']),
+			'jobTitle' => sanitize_text_field($form_data['jobTitle']),
+			'hasCredential' => [
+				'@type' => sanitize_text_field($form_data['credentialType']),
+				'name' => sanitize_text_field($form_data['credentialName']),
+			],
+			'worksFor' => [
+				'@type' => sanitize_text_field($form_data['worksForType']),
+				'name' => sanitize_text_field($form_data['worksForName']),
+			],
+			'authorTag' => sanitize_text_field($form_data['authorTag']),
+			'editorTag' => sanitize_text_field($form_data['editorTag']),
+			'reviewedByTag' => sanitize_text_field($form_data['reviewedByTag']),
+		);
+	
+		// Convert other inputs to JSON
+		$other_data_json = wp_json_encode($other_data);
+	
+		// Insert data into the database
+		$wpdb->insert(
+			$table_name,
+			array(
+				'byline_name' => $byline_name,
+				'profile_image' => $profile_image,
+				'description' => $description,
+				'data' => $other_data_json,
+				'type' => $type,
+			),
+			array(
+				'%s',
+				'%s',
+				'%s',
+				'%s',
+				'%s',
+			)
+		);
+	
+		// Check for errors
+		if ($wpdb->last_error) {
+			wp_send_json_error('Error inserting data: ' . $wpdb->last_error, 403);
+		} else {
+			// store all tags in an array and add them to the option 'amfm_byline_tags' if it doesn't already exist
+			$tags = array($other_data['authorTag'], $other_data['editorTag'], $other_data['reviewedByTag']);
+			$tags = array_filter($tags);
+			$tags = array_unique($tags);
+
+			$existing_tags = get_option('amfm_byline_tags', array());
+			$tags = array_merge($existing_tags, $tags);
+			$tags = array_unique($tags);
+			update_option('amfm_byline_tags', $tags);
+			
+			// Return success message
+			wp_send_json_success('Data saved successfully!');
+		}
+	}
+
+	public function delete_amfm_byline() {
+		check_ajax_referer('amfm_delete_byline_nonce', 'nonce');
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'amfm_bylines';
+		$id = intval($_POST['id']);
+
+		$deleted = $wpdb->delete($table_name, array('id' => $id), array('%d'));
+
+		if ($deleted) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_error('Error deleting byline.');
+		}
+	}
+
+	
 }

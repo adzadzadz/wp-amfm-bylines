@@ -158,6 +158,10 @@ class Amfm_Bylines {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
 
+		// add_action('wp_ajax_fetch_pages', 'fetch_pages');
+		$this->loader->add_action('wp_ajax_fetch_pages', $plugin_admin, 'fetch_pages');
+		$this->loader->add_action('wp_ajax_save_amfm_bylines', $plugin_admin, 'save_amfm_bylines');
+		$this->loader->add_action('wp_ajax_delete_amfm_bylines', $plugin_admin, 'delete_amfm_bylines');
 	}
 
 	/**
@@ -171,8 +175,11 @@ class Amfm_Bylines {
 
 		$plugin_public = new Amfm_Bylines_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
+		// best hook to add my filter manage_bylines_schema
+		$this->loader->add_action('init', $plugin_public, 'manage_bylines_schema');
 
 	}
 

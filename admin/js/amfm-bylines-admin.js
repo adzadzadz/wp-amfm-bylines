@@ -32,6 +32,16 @@
 	// Open and close drawer
 	$(document).ready(function () {
 		$('.amfm-card').on('click', function () {
+
+			// check if clicked card has id "amfm-create-card", if so, open drawer with empty fields
+			if ($(this).attr('id') === 'amfm-create-card') {
+				$('#amfmDrawer .drawer-title').text('Create New Byline');
+				$('#amfmDrawer').addClass('open');
+				// reset form fields
+				$('#amfm-bylines-form')[0].reset();
+				return;
+			}
+
 			var cardTitle = $(this).find('.card-title').text();
 			// var cardImage = $(this).find('.card-img-top').attr('src');
 			// var cardBody = $(this).find('.card-body').html();
@@ -67,36 +77,182 @@
 		}
 	});
 
-})(jQuery);
+	// Media handler
+	jQuery(document).ready(function ($) {
+		$('#upload_image_button').on('click', function (e) {
+			e.preventDefault();
+			var mediaFrame;
 
-// Media handler
-jQuery(document).ready(function ($) {
-	$('#upload_image_button').on('click', function (e) {
-		e.preventDefault();
-		var mediaFrame;
+			// If the media frame already exists, reopen it.
+			if (mediaFrame) {
+				mediaFrame.open();
+				return;
+			}
 
-		// If the media frame already exists, reopen it.
-		if (mediaFrame) {
+			// Create a new media frame
+			mediaFrame = wp.media({
+				title: 'Select or Upload Media',
+				button: {
+					text: 'Use this media'
+				},
+				multiple: false
+			});
+
+			// When an image is selected, run a callback.
+			mediaFrame.on('select', function () {
+				var attachment = mediaFrame.state().get('selection').first().toJSON();
+				$('#image_url').val(attachment.url); // Set the image URL to the input field
+			});
+
+			// Finally, open the modal
 			mediaFrame.open();
-			return;
+		});
+	});
+
+	// Page Selector
+	jQuery(document).ready(function($) {
+		function fetchPages() {
+			$.ajax({
+				url: amfmLocalize.ajax_url,
+				method: 'GET',
+				data: {
+					action: 'fetch_pages',
+					nonce: amfmLocalize.pageSelectorNonce
+				},
+				success: function(response) {
+					if (response.success) {
+						var pages = response.data;
+						var $pageSelector = $('#page_selector');
+						$pageSelector.empty();
+						$pageSelector.append('<option value="">' + 'Select a page' + '</option>');
+						$.each(pages, function(index, page) {
+							console.log(page);
+							$pageSelector.append('<option value="' + page.link + '">' + page.title + '</option>');
+						});
+					}
+				}
+			});
 		}
 
-		// Create a new media frame
-		mediaFrame = wp.media({
-			title: 'Select or Upload Media',
-			button: {
-				text: 'Use this media'
-			},
-			multiple: false
-		});
+		fetchPages();
 
-		// When an image is selected, run a callback.
-		mediaFrame.on('select', function () {
-			var attachment = mediaFrame.state().get('selection').first().toJSON();
-			$('#image_url').val(attachment.url); // Set the image URL to the input field
+		$('#page_selector').on('change', function() {
+			var selectedUrl = $(this).val();
+			$('#page_url').val(selectedUrl);
 		});
-
-		// Finally, open the modal
-		mediaFrame.open();
 	});
-});
+
+	// Ajax CRUD
+	jQuery(document).ready(function($) {
+		$('#amfm-bylines-form').on('submit', function(e) {
+			e.preventDefault();
+
+			var formData = $(this).serialize();
+			var name = $('#name').val().trim();
+
+			if (name === '') {
+				var message = $('<div class="flash-message error"></div>').text('Name is required.');
+				$('#flash-message-container').html(message);
+				setTimeout(function() {
+					message.fadeOut(function() {
+						$(this).remove();
+					});
+				}, 5000);
+				return;
+			}
+
+			$.ajax({
+				url: amfmLocalize.ajax_url,
+				method: 'POST',
+				data: {
+					action: 'save_amfm_bylines',
+					nonce: amfmLocalize.saveBylineNonce,
+					form_data: formData
+				},
+				success: function(response) {
+					var message = $('<div class="flash-message"></div>');
+					if (response.success) {
+						message.text('Data saved successfully!').addClass('success');
+						$('#amfm-bylines-form')[0].reset(); // Clear the form
+						
+						// Temporary solution to reload data
+						location.reload(); // Reload the bylines list
+					} else {
+						message.text('There was an error saving the data.').addClass('error');
+					}
+					$('#flash-message-container').html(message);
+
+					$('#amfmDrawer').removeClass('open');
+					
+					setTimeout(function() {
+						message.fadeOut(function() {
+							$(this).remove();
+						});
+					}, 5000);
+				},
+				error: function(jqXHR) {
+					var message = $('<div class="flash-message error"></div>');
+					if (jqXHR.status === 403) {
+						message.text('Unauthorized request. Please refresh the page and try again.');
+					} else {
+						message.text('There was an error processing the request.');
+					}
+					$('#flash-message-container').html(message);
+					setTimeout(function() {
+						message.fadeOut(function() {
+							$(this).remove();
+						});
+						$('#amfmDrawer').removeClass('open');
+					}, 5000);
+				}
+			});
+		});
+	});
+
+	$(document).ready(function () {
+		$('.amfm-card').on('click', function () {
+			var cardData = $(this).data();
+			$('#name').val(cardData.name);
+			$('#image_url').val(cardData.image);
+			$('#description').val(cardData.description);
+			if (cardData.data) {
+				console.log(cardData.data);
+				var otherData = cardData.data;
+				$('#page_url').val(otherData.page_url);
+				$('#honorificSuffix').val(otherData.honorificSuffix);
+				$('#jobTitle').val(otherData.jobTitle);
+				$('#credentialType').val(otherData.hasCredential['@type']);
+				$('#credentialName').val(otherData.hasCredential['name']);
+				$('#worksForType').val(otherData.worksFor['@type']);
+				$('#worksForName').val(otherData.worksFor['name']);				
+				$('#authorTag').val(otherData.authorTag);
+				$('#editorTag').val(otherData.editorTag);
+				$('#reviewedByTag').val(otherData.reviewedByTag);
+			}
+			$('#amfmDrawer').addClass('open');
+		});
+
+		$('.delete-byline').on('click', function (e) {
+			e.stopPropagation();
+			var bylineId = $(this).data('id');
+			if (confirm('Are you sure you want to delete this byline?')) {
+				$.ajax({
+					url: amfmLocalize.ajax_url,
+					method: 'POST',
+					data: {
+						action: 'delete_amfm_byline',
+						nonce: amfmLocalize.deleteBylineNonce,
+						id: bylineId
+					},
+					success: function (response) {
+						if (response.success) {
+							location.reload();
+						} else {
+							alert('There was an error deleting the byline.');
+						}
+					}
+				});
+			}
+		});
+	});
+})(jQuery);

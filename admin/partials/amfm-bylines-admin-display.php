@@ -11,23 +11,51 @@
  * @package    Amfm_Bylines
  * @subpackage Amfm_Bylines/admin/partials
  */
-?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+// get all data stored in the amfm_bylines table in the database
+global $wpdb;
+$bylines = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}amfm_bylines");
+
+// get all amfm_bylines_tags
+$tags = get_option('amfm_bylines_tags');
+
+$tag_output = '';
+// list each tag as a small button
+foreach ($tags['author_tags'] as $tag) {
+    $tag_output .= '<button class="btn btn-sm btn-secondary btn-info amfm-btn-tag">' . $tag . '</button>';
+}
+
+foreach ($tags['editor_tags'] as $tag) {
+    $tag_output .= '<button class="btn btn-sm btn-secondary btn-success amfm-btn-tag">' . $tag . '</button>';
+}
+
+foreach ($tags['reviewed_by_tags'] as $tag) {
+    $tag_output .= '<button class="btn btn-sm btn-secondary btn-warning amfm-btn-tag">' . $tag . '</button>';
+}
+
+
+?>
 
 <div class="wrap">
     <h2><strong><?php _e('Amfm Bylines', 'amfm-bylines'); ?></strong></h2>
     <p><?php _e('This plugin allows you to manage bylines.', 'amfm-bylines'); ?></p>
 </div>
 
+<div id="flash-message-container"></div>
+
+<div class="wrap">
+    <h5><strong><?php _e('Saved Tags', 'amfm-bylines'); ?></strong></h5>
+    <div><?= $tag_output ?></div>
+</div>
+
 <!-- Create 2 columns sizes 3/4 & 1/4 width. Col 1 contains a repeater list while col 2 contains a form with name and data fields -->
 <div class="wrap">
     <div class="row">
-        <div class="col-12">
-            <h4><?php _e('List', 'amfm-list'); ?></h4>
+        <div class="col-12 mt-4">
+            <h5><?php _e('People', 'amfm-list'); ?></h5>
             <div class="row">
                 <div class="col-3">
-                    <div class="card amfm-card">
+                    <div class="card amfm-card" id="amfm-create-card">
                         <img src="http://test.local/wp-content/uploads/2024/11/placeholder.jpeg" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">Add a Person</h5>
@@ -35,17 +63,34 @@
                     </div>
                 </div>
 
-                <?php for ($i = 0; $i < 5; $i++) : ?>
+                <?php foreach ($bylines as $byline) : ?>
                     <div class="col-3">
-                        <div class="card amfm-card">
-                            <img src="http://test.local/wp-content/uploads/2024/11/placeholder.jpeg" class="card-img-top" alt="...">
+                        <div class="card amfm-card" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>">
+                            <div class="card-img-top" style="background-image: url('<?php echo esc_url($byline->profile_image); ?>'); background-size: cover; background-position: center; width: 100%; padding-top: 100%;"></div>
                             <div class="card-body">
-                                <h5 class="card-title">Jane R. Doe</h5>
+                                <h5 class="card-title"><?php echo esc_html($byline->byline_name); ?></h5>
+                                <p class="card-text"><?php echo esc_html(wp_trim_words($byline->description, 10, '...')); ?></p>
+                                <button type="button" class="close delete-byline" data-id="<?php echo esc_attr($byline->id); ?>" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
                         </div>
                     </div>
-                <?php endfor; ?>
+                <?php endforeach; ?>
             </div>
+            <style>
+                .amfm-card {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .amfm-card .card-body {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
+            </style>
         </div>
     </div>
 </div>
@@ -62,9 +107,10 @@
         </div>
         <div class="drawer-body">
             <!-- Drawer content will be dynamically inserted here -->
-            <form method="post" action="">
+            <form method="post" action="" id="amfm-bylines-form">
+
                 <div class="form-group">
-                    <label for="image"><?php _e('Image URL', 'amfm-bylines'); ?></label>
+                    <label for="image"><?php _e('Image URL', 'amfm_bylines'); ?></label>
                     <div class="input-group" style="width: 100%;">
                         <div class="input-group-prepend">
                             <button type="button" class="btn btn-secondary" id="upload_image_button"><?php _e('Upload Image', 'amfm-bylines'); ?></button>
@@ -74,8 +120,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="page_url"><?php _e('Select Page', 'amfm-bylines'); ?></label>
+                    <select id="page_selector" class="form-control">
+                        <option value=""><?php _e('Select a page', 'amfm-bylines'); ?></option>
+                    </select>
+                    <input type="text" id="page_url" name="page_url" class="form-control">
+                </div>
+
+                <div class="form-group">
                     <label for="name"><?php _e('Name', 'amfm-bylines'); ?></label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input type="text" class="form-control" id="name" name="name">
                 </div>
                 <div class="form-group">
                     <label for="honorificSuffix"><?php _e('Honorific Suffix', 'amfm-bylines'); ?></label>
@@ -89,13 +143,27 @@
                     <label for="jobTitle"><?php _e('Job Title', 'amfm-bylines'); ?></label>
                     <input type="text" class="form-control" id="jobTitle" name="jobTitle">
                 </div>
-                <div class="form-group">
-                    <label for="hasCredential"><?php _e('Credential', 'amfm-bylines'); ?></label>
-                    <input type="text" class="form-control" id="hasCredential" name="hasCredential">
+                <div class="form-group mt-3 mb-3 amfm-border-bottom">
+                    <label><strong><?php _e('Has Credentials', 'amfm-bylines'); ?></strong></label>
+                    <div class="form-group">
+                        <label for="credentialType"><?php _e('Credential Type', 'amfm-bylines'); ?></label>
+                        <input type="text" class="form-control" id="credentialType" name="credentialType">
+                    </div>
+                    <div class="form-group">
+                        <label for="credentialName"><?php _e('Credential Name', 'amfm-bylines'); ?></label>
+                        <input type="text" class="form-control" id="credentialName" name="credentialName">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="worksFor"><?php _e('Works For', 'amfm-bylines'); ?></label>
-                    <input type="text" class="form-control" id="worksFor" name="worksFor">
+                <div class="form-group mt-3 mb-3 amfm-border-bottom">
+                    <label><strong><?php _e('Works For', 'amfm-bylines'); ?></strong></label>
+                    <div class="form-group">
+                        <label for="worksForType"><?php _e('Type', 'amfm-bylines'); ?></label>
+                        <input type="text" class="form-control" id="worksForType" name="worksForType">
+                    </div>
+                    <div class="form-group">
+                        <label for="worksForName"><?php _e('Name', 'amfm-bylines'); ?></label>
+                        <input type="text" class="form-control" id="worksForName" name="worksForName">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="authorTag"><?php _e('Author Tag', 'amfm-bylines'); ?></label>
@@ -109,7 +177,10 @@
                     <label for="reviewedByTag"><?php _e('Reviewed By Tag', 'amfm-bylines'); ?></label>
                     <input type="text" class="form-control" id="reviewedByTag" name="reviewedByTag">
                 </div>
-                <button type="submit" class="btn btn-primary"><?php _e('Submit', 'amfm-bylines'); ?></button>
+                <div class="form-group">
+                    <button type="reset" class="btn btn-secondary mt-3"><?php _e('Reset', 'amfm-bylines'); ?></button>
+                    <button type="submit" class="btn btn-primary mt-3"><?php _e('Submit', 'amfm-bylines'); ?></button>
+                </div>
             </form>
         </div>
     </div>
