@@ -215,6 +215,7 @@
 			$('#name').val(cardData.name);
 			$('#image_url').val(cardData.image);
 			$('#description').val(cardData.description);
+			$('#byline_id').val(cardData.id); // Add this line to set the byline ID
 			if (cardData.data) {
 				console.log(cardData.data);
 				var otherData = cardData.data;
@@ -225,11 +226,18 @@
 				$('#credentialName').val(otherData.hasCredential['name']);
 				$('#worksForType').val(otherData.worksFor['@type']);
 				$('#worksForName').val(otherData.worksFor['name']);				
-				$('#authorTag').val(otherData.authorTag);
-				$('#editorTag').val(otherData.editorTag);
-				$('#reviewedByTag').val(otherData.reviewedByTag);
 			}
+			$('#authorTag').val(cardData.authorTag);
+			$('#editorTag').val(cardData.editorTag);
+			$('#reviewedByTag').val(cardData.reviewedByTag);
 			$('#amfmDrawer').addClass('open');
+			$('#amfm-bylines-form button[type="reset"]').hide(); // Hide reset button
+			$('#amfm-bylines-form button[type="submit"]').text('Save'); // Change submit button text to "Save"
+		});
+
+		$('#amfm-create-card').on('click', function () {
+			$('#amfm-bylines-form button[type="reset"]').show(); // Show reset button
+			$('#amfm-bylines-form button[type="submit"]').text('Submit'); // Change submit button text to "Submit"
 		});
 
 		$('.delete-byline').on('click', function (e) {

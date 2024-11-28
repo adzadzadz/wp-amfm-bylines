@@ -16,22 +16,8 @@
 global $wpdb;
 $bylines = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}amfm_bylines");
 
-// get all amfm_bylines_tags
-$tags = get_option('amfm_bylines_tags');
-
-$tag_output = '';
-// list each tag as a small button
-foreach ($tags['author_tags'] as $tag) {
-    $tag_output .= '<button class="btn btn-sm btn-secondary btn-info amfm-btn-tag">' . $tag . '</button>';
-}
-
-foreach ($tags['editor_tags'] as $tag) {
-    $tag_output .= '<button class="btn btn-sm btn-secondary btn-success amfm-btn-tag">' . $tag . '</button>';
-}
-
-foreach ($tags['reviewed_by_tags'] as $tag) {
-    $tag_output .= '<button class="btn btn-sm btn-secondary btn-warning amfm-btn-tag">' . $tag . '</button>';
-}
+// return plugin url
+$placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
 
 
 ?>
@@ -44,19 +30,21 @@ foreach ($tags['reviewed_by_tags'] as $tag) {
 <div id="flash-message-container"></div>
 
 <div class="wrap">
-    <h5><strong><?php _e('Saved Tags', 'amfm-bylines'); ?></strong></h5>
-    <div><?= $tag_output ?></div>
+    <h5>Shortcode</h5>
+
+    <div><strong>Usage:</strong> [amfm_info type="author" data="job_title"]</div>
+    <div><strong>type:</strong> author, editor, reviewedBy</div>
+    <div><strong>data:</strong> name, suffix, job_title, page_link</div>
 </div>
 
-<!-- Create 2 columns sizes 3/4 & 1/4 width. Col 1 contains a repeater list while col 2 contains a form with name and data fields -->
 <div class="wrap">
     <div class="row">
         <div class="col-12 mt-4">
             <h5><?php _e('People', 'amfm-list'); ?></h5>
             <div class="row">
-                <div class="col-3">
+                <div class="col-3 mb-4">
                     <div class="card amfm-card" id="amfm-create-card">
-                        <img src="http://test.local/wp-content/uploads/2024/11/placeholder.jpeg" class="card-img-top" alt="...">
+                        <img src="<?= $placeholder ?>" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">Add a Person</h5>
                         </div>
@@ -64,8 +52,8 @@ foreach ($tags['reviewed_by_tags'] as $tag) {
                 </div>
 
                 <?php foreach ($bylines as $byline) : ?>
-                    <div class="col-3">
-                        <div class="card amfm-card" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>">
+                    <div class="col-3 mb-4">
+                        <div class="card amfm-card" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>" data-author-tag="<?php echo esc_attr($byline->authorTag); ?>" data-editor-tag="<?php echo esc_attr($byline->editorTag); ?>" data-reviewed-by-tag="<?php echo esc_attr($byline->reviewedByTag); ?>">
                             <div class="card-img-top" style="background-image: url('<?php echo esc_url($byline->profile_image); ?>'); background-size: cover; background-position: center; width: 100%; padding-top: 100%;"></div>
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo esc_html($byline->byline_name); ?></h5>
@@ -108,7 +96,7 @@ foreach ($tags['reviewed_by_tags'] as $tag) {
         <div class="drawer-body">
             <!-- Drawer content will be dynamically inserted here -->
             <form method="post" action="" id="amfm-bylines-form">
-
+                <input type="hidden" id="byline_id" name="byline_id" value="">
                 <div class="form-group">
                     <label for="image"><?php _e('Image URL', 'amfm_bylines'); ?></label>
                     <div class="input-group" style="width: 100%;">
@@ -143,7 +131,7 @@ foreach ($tags['reviewed_by_tags'] as $tag) {
                     <label for="jobTitle"><?php _e('Job Title', 'amfm-bylines'); ?></label>
                     <input type="text" class="form-control" id="jobTitle" name="jobTitle">
                 </div>
-                <div class="form-group mt-3 mb-3 amfm-border-bottom">
+                <div class="form-group mt-3 mb-3">
                     <label><strong><?php _e('Has Credentials', 'amfm-bylines'); ?></strong></label>
                     <div class="form-group">
                         <label for="credentialType"><?php _e('Credential Type', 'amfm-bylines'); ?></label>
@@ -154,7 +142,7 @@ foreach ($tags['reviewed_by_tags'] as $tag) {
                         <input type="text" class="form-control" id="credentialName" name="credentialName">
                     </div>
                 </div>
-                <div class="form-group mt-3 mb-3 amfm-border-bottom">
+                <div class="form-group mt-3 mb-3">
                     <label><strong><?php _e('Works For', 'amfm-bylines'); ?></strong></label>
                     <div class="form-group">
                         <label for="worksForType"><?php _e('Type', 'amfm-bylines'); ?></label>

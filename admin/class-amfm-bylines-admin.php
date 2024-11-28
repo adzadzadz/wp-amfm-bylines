@@ -159,28 +159,33 @@ class Amfm_Bylines_Admin
 		wp_send_json_success($response);
 	}
 
-	public function save_amfm_bylines() {
+	public function save_amfm_bylines()
+	{
 		if (!isset($_POST['nonce'])) {
 			wp_send_json_error('Nonce not set', 403);
 			wp_die();
 		}
-	
+
 		if (!wp_verify_nonce($_POST['nonce'], 'amfm_save_byline_nonce')) {
 			wp_send_json_error('Nonce verification failed', 403);
 			wp_die();
 		}
-	
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'amfm_bylines';
-	
+
 		parse_str($_POST['form_data'], $form_data);
-	
+
 		// Sanitize and collect the inputs
+		$byline_id = isset($form_data['byline_id']) ? intval($form_data['byline_id']) : 0;
 		$byline_name = sanitize_text_field($form_data['name']);
 		$profile_image = esc_url_raw($form_data['image_url']);
 		$description = sanitize_textarea_field($form_data['description']);
 		$type = 'Default';
-	
+		$authorTag = sanitize_text_field($form_data['authorTag']);
+		$editorTag = sanitize_text_field($form_data['editorTag']);
+		$reviewedByTag = sanitize_text_field($form_data['reviewedByTag']);
+
 		// Collect other inputs
 		$other_data = array(
 			'page_url' => esc_url_raw($form_data['page_url']),
@@ -198,49 +203,110 @@ class Amfm_Bylines_Admin
 			'editorTag' => sanitize_text_field($form_data['editorTag']),
 			'reviewedByTag' => sanitize_text_field($form_data['reviewedByTag']),
 		);
-	
+
 		// Convert other inputs to JSON
 		$other_data_json = wp_json_encode($other_data);
-	
-		// Insert data into the database
-		$wpdb->insert(
-			$table_name,
-			array(
-				'byline_name' => $byline_name,
-				'profile_image' => $profile_image,
-				'description' => $description,
-				'data' => $other_data_json,
-				'type' => $type,
-			),
-			array(
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-			)
-		);
-	
+
+		if ($byline_id > 0) {
+			// Update existing byline
+			$wpdb->update(
+				$table_name,
+				array(
+					'byline_name' => $byline_name,
+					'profile_image' => $profile_image,
+					'description' => $description,
+					'data' => $other_data_json,
+					'type' => $type,
+					'authorTag' => $authorTag,
+					'editorTag' => $editorTag,
+					'reviewedByTag' => $reviewedByTag,
+				),
+				array('id' => $byline_id),
+				array(
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+				),
+				array('%d')
+			);
+		} else {
+			// Insert new byline
+			$wpdb->insert(
+				$table_name,
+				array(
+					'byline_name' => $byline_name,
+					'profile_image' => $profile_image,
+					'description' => $description,
+					'data' => $other_data_json,
+					'type' => $type,
+					'authorTag' => $authorTag,
+					'editorTag' => $editorTag,
+					'reviewedByTag' => $reviewedByTag,
+				),
+				array(
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+				)
+			);
+		}
+
 		// Check for errors
 		if ($wpdb->last_error) {
-			wp_send_json_error('Error inserting data: ' . $wpdb->last_error, 403);
+			wp_send_json_error('Error saving data: ' . $wpdb->last_error, 403);
 		} else {
-			// store all tags in an array and add them to the option 'amfm_byline_tags' if it doesn't already exist
-			$tags = array($other_data['authorTag'], $other_data['editorTag'], $other_data['reviewedByTag']);
-			$tags = array_filter($tags);
-			$tags = array_unique($tags);
+			// Store all tags in their respective categories
+			$tags = array(
+				'author_tags' => array($other_data['authorTag']),
+				'editor_tags' => array($other_data['editorTag']),
+				'reviewed_by_tags' => array($other_data['reviewedByTag'])
+			);
 
-			$existing_tags = get_option('amfm_byline_tags', array());
-			$tags = array_merge($existing_tags, $tags);
-			$tags = array_unique($tags);
-			update_option('amfm_byline_tags', $tags);
-			
+			// Filter out empty tags
+			$tags['author_tags'] = array_filter($tags['author_tags']);
+			$tags['editor_tags'] = array_filter($tags['editor_tags']);
+			$tags['reviewed_by_tags'] = array_filter($tags['reviewed_by_tags']);
+
+			// Get existing tags from the option
+			$existing_tags = get_option('amfm_bylines_tags', array(
+				'author_tags' => array(),
+				'editor_tags' => array(),
+				'reviewed_by_tags' => array()
+			));
+
+			if (!is_array($existing_tags) || !isset($existing_tags['author_tags']) || !isset($existing_tags['editor_tags']) || !isset($existing_tags['reviewed_by_tags'])) {
+				$existing_tags = array(
+					'author_tags' => array(),
+					'editor_tags' => array(),
+					'reviewed_by_tags' => array()
+				);
+			}
+
+			// Merge new tags with existing tags
+			$existing_tags['author_tags'] = array_unique(array_merge($existing_tags['author_tags'], $tags['author_tags']));
+			$existing_tags['editor_tags'] = array_unique(array_merge($existing_tags['editor_tags'], $tags['editor_tags']));
+			$existing_tags['reviewed_by_tags'] = array_unique(array_merge($existing_tags['reviewed_by_tags'], $tags['reviewed_by_tags']));
+
+			// Update the option with the merged tags
+			update_option('amfm_bylines_tags', $existing_tags);
+
 			// Return success message
 			wp_send_json_success('Data saved successfully!');
 		}
 	}
 
-	public function delete_amfm_byline() {
+	public function delete_amfm_byline()
+	{
 		check_ajax_referer('amfm_delete_byline_nonce', 'nonce');
 
 		global $wpdb;
@@ -255,6 +321,4 @@ class Amfm_Bylines_Admin
 			wp_send_json_error('Error deleting byline.');
 		}
 	}
-
-	
 }

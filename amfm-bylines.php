@@ -16,7 +16,7 @@
  * Plugin Name:       AMFM Bylines
  * Plugin URI:        https://adzjo.online
  * Description:       Byline Management
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Adrian T. Saycon
  * Author URI:        https://adzjo.online/adz/
  * License:           GPL-2.0+
@@ -82,4 +82,17 @@ function run_amfm_bylines() {
 run_amfm_bylines();
 
 // add these tags to the amfm_bylines_tags option ['author_tags' => ['authored-by-aja-chavez', 'authored-by-jason-shipley', 'authored-by-fernanda-perez-rios'], 'editor_tags' => ['edited-by-aja-chavez', 'edited-by-jason-shipley', 'edited-by-fernanda-perez-rios'], 'reviewed_by_tags' => []]
+// add_option('amfm_bylines_tags', []);
 // update_option('amfm_bylines_tags', ['author_tags' => ['authored-by-aja-chavez', 'authored-by-jason-shipley', 'authored-by-fernanda-perez-rios'], 'editor_tags' => ['edited-by-aja-chavez', 'edited-by-jason-shipley', 'edited-by-fernanda-perez-rios'], 'reviewed_by_tags' => []]);
+
+// show all errors
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
+// var_dump('adzadzadz');
+
+// Display h1 "ADZADZADZ" on top of every page
+// add_action('wp_head', function() {
+// 	echo '<h1>ADZADZADZ</h1>';
+// });

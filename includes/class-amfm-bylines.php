@@ -175,11 +175,11 @@ class Amfm_Bylines {
 
 		$plugin_public = new Amfm_Bylines_Public( $this->get_plugin_name(), $this->get_version() );
 
-		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		// best hook to add my filter manage_bylines_schema
-		$this->loader->add_action('init', $plugin_public, 'manage_bylines_schema');
+		$this->loader->add_action('init', $plugin_public, 'init');
 
 	}
 

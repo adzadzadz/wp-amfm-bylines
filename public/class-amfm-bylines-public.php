@@ -100,10 +100,16 @@ class Amfm_Bylines_Public {
 
 	}
 
+	public function init()
+	{
+		$this->manage_bylines_schema();
+		$this->run_shortcodes();
+	}
+
 	public function manage_bylines_schema()
 	{
 		add_filter('rank_math/json_ld', function ($data, $jsonld) {
-			if (is_singular('post')) {
+			if (is_singular('post') || is_page()) {
 
 				// get all bylines from database
 				global $wpdb;
@@ -118,7 +124,7 @@ class Amfm_Bylines_Public {
 				foreach ($bylines as $byline) {
 					$byline_data = json_decode($byline->data, true);
 
-					if (has_tag($byline_data['authorTag'])) {
+					if (has_tag($byline->authorTag, get_queried_object_id())) {
 						$author_schema = array(
 							'@type' => 'Person',
 							'url' => $byline_data['page_url'],
@@ -138,8 +144,28 @@ class Amfm_Bylines_Public {
 						);
 					}
 
-					if (has_tag($byline_data['editorTag'])) {
+					if (has_tag($byline->editorTag, get_queried_object_id())) {
 						$editor_schema = array(
+							'@type' => 'Person',
+							'url' => $byline_data['page_url'],
+							'image' => $byline->profile_image,
+							'name' => $byline->byline_name,
+							'honorificSuffix' => $byline_data['honorificSuffix'],
+							'description' => $byline->description,
+							'jobTitle' => $byline_data['jobTitle'],
+							'hasCredential' => array(
+								'@type' => $byline_data['hasCredential']['@type'],
+								'name' => $byline_data['hasCredential']['name']
+							),
+							'worksFor' => array(
+								'@type' => $byline_data['worksFor']['@type'],
+								'name' => $byline_data['worksFor']['name']
+							)
+						);
+					}
+
+					if (has_tag($byline->reviewedByTag, get_queried_object_id())) {
+						$reviewedBy_schema = array(
 							'@type' => 'Person',
 							'url' => $byline_data['page_url'],
 							'image' => $byline->profile_image,
@@ -184,6 +210,92 @@ class Amfm_Bylines_Public {
 			}
 		}, 99, 2);
 		
+	}
+
+	private function get_byline($type)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'amfm_bylines';
+		$bylines = $wpdb->get_results("SELECT * FROM $table_name");
+
+		foreach ($bylines as $byline) {
+			$byline_data = json_decode($byline->data, true);
+		
+			if (has_tag($byline->authorTag, get_queried_object_id()) && 'author' === $type) {
+				return $byline;
+			}
+
+			if (has_tag($byline->editorTag, get_queried_object_id()) && 'editor' === $type) {
+				return $byline;
+			}
+
+			if (has_tag($byline->reviewedByTag, get_queried_object_id()) && 'reviewedBy' === $type) {
+				return $byline;
+			}
+		}
+
+		return false;
+	}
+
+	// create a shortcode to display bylines
+	public function run_shortcodes()
+	{
+		/**
+		 * Usage: [amfm_info type="editor" data="job_title"]
+		 * type: author, editor, reviewedBy
+		 * data: name, credentials, job_title, page_url, img
+		 * 
+		 * returns raw text
+		 */
+		add_shortcode('amfm_info', function ($atts) {
+			$type = $atts['type']; # author, editor, reviewedBy
+			$data = $atts['data']; # name, credentials, job_title, page_url
+
+			$output = '';
+
+			if (!in_array($type, ['author', 'editor', 'reviewedBy'])) {
+				return "Type must be either 'author', 'editor', 'reviewedBy'";
+			}
+
+			if (!in_array($data, ['name', 'credentials', 'job_title', 'page_url', 'img'])) {
+				return "Data must be either 'name', 'credentials', 'job_title', or 'page_url', 'img'";
+			}
+			
+			$byline = $this->get_byline($type);
+			if (!$byline)
+				return "No byline found";
+
+			$byline_data = json_decode($byline->data, true);
+
+			switch ($data) {
+				case 'name':
+					$output = $byline->byline_name;
+					break;
+				case 'credentials':
+					$output = $byline_data['honorificSuffix'];
+					break;
+				case 'job_title':
+					$output = $byline_data['jobTitle'];
+					break;
+				case 'page_url':
+					$output = preg_replace('/^https?:\/\//', '', $byline_data['page_url']);
+					break;
+				case 'img':
+					$profile_url = $byline->profile_image ? $byline->profile_image : plugin_dir_url(__FILE__) . 'placeholder.jpeg';
+					$name = $byline->byline_name;
+					$output = <<<HTML
+						<div style="text-align: center; display: inline-block;">
+							<img 
+								style="width: 40px; border-radius: 50%; border: 2px #00245d solid;" 
+								src="$profile_url" 
+								alt="$name" />
+						</div>
+					HTML;
+					break;
+			}
+
+			return "$output";
+		});
 	}
 
 }

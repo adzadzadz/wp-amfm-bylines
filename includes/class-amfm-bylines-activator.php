@@ -36,7 +36,7 @@ class Amfm_Bylines_Activator {
 
 		// create an option called 'amfm_bylines' if it doesn't exist yet.
 		if (!get_option('amfm_bylines_tags')) {
-			add_option('amfm_bylines_tags', '');
+			add_option('amfm_bylines_tags', []);
 		}
 	
 		// Check if the table already exists
@@ -45,6 +45,12 @@ class Amfm_Bylines_Activator {
 				id mediumint(9) NOT NULL AUTO_INCREMENT,
 				byline_name varchar(100) NOT NULL,
 				data longtext NOT NULL,
+				profile_image TEXT,
+				description TEXT,
+				type VARCHAR(255),
+				authorTag VARCHAR(255),
+				editorTag VARCHAR(255),
+				reviewedByTag VARCHAR(255),
 				PRIMARY KEY  (id)
 			) $charset_collate;";
 	
@@ -73,6 +79,21 @@ class Amfm_Bylines_Activator {
 		$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'type'");
 		if (empty($columns)) {
 			$wpdb->query("ALTER TABLE $table_name ADD type VARCHAR(255)");
+		}
+
+		$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'authorTag'");
+		if (empty($columns)) {
+			$wpdb->query("ALTER TABLE $table_name ADD authorTag VARCHAR(255)");
+		}
+
+		$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'editorTag'");
+		if (empty($columns)) {
+			$wpdb->query("ALTER TABLE $table_name ADD editorTag VARCHAR(255)");
+		}
+
+		$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'reviewedByTag'");
+		if (empty($columns)) {
+			$wpdb->query("ALTER TABLE $table_name ADD reviewedByTag VARCHAR(255)");
 		}
 	
 		// Check for errors after altering the table
