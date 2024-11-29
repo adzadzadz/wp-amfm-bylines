@@ -16,33 +16,22 @@
 global $wpdb;
 $bylines = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}amfm_bylines");
 
-// return plugin url
 $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
-
 
 ?>
 
 <div class="wrap">
-    <h2><strong><?php _e('Amfm Bylines', 'amfm-bylines'); ?></strong></h2>
-    <p><?php _e('This plugin allows you to manage bylines.', 'amfm-bylines'); ?></p>
+    <h2><strong><?php _e('Manage Bylines', 'amfm-bylines'); ?></strong></h2>
+    <p><?php _e('This plugin allows you to manage bylines for your posts and pages. You can add, edit, and remove bylines, as well as assign specific roles and credentials to each byline. This helps in providing proper attribution and recognition to the contributors of your content.', 'amfm-bylines'); ?></p>
 </div>
 
 <div id="flash-message-container"></div>
 
 <div class="wrap">
-    <h5>Shortcode</h5>
-
-    <div><strong>Usage:</strong> [amfm_info type="author" data="job_title"]</div>
-    <div><strong>type:</strong> author, editor, reviewedBy</div>
-    <div><strong>data:</strong> name, suffix, job_title, page_link</div>
-</div>
-
-<div class="wrap">
     <div class="row">
         <div class="col-12 mt-4">
-            <h5><?php _e('People', 'amfm-list'); ?></h5>
             <div class="row">
-                <div class="col-3 mb-4">
+                <div class="col-2 mb-4">
                     <div class="card amfm-card" id="amfm-create-card">
                         <img src="<?= $placeholder ?>" class="card-img-top" alt="...">
                         <div class="card-body">
@@ -52,7 +41,7 @@ $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
                 </div>
 
                 <?php foreach ($bylines as $byline) : ?>
-                    <div class="col-3 mb-4">
+                    <div class="col-2 mb-4">
                         <div class="card amfm-card amfm-card-item" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>" data-author-tag="<?php echo esc_attr($byline->authorTag); ?>" data-editor-tag="<?php echo esc_attr($byline->editorTag); ?>" data-reviewed-by-tag="<?php echo esc_attr($byline->reviewedByTag); ?>">
                             <div class="card-img-top" style="background-image: url('<?php echo esc_url($byline->profile_image); ?>'); background-size: cover; background-position: center; width: 100%; padding-top: 100%;"></div>
                             <div class="card-body">
@@ -70,6 +59,7 @@ $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
                     display: flex;
                     flex-direction: column;
                 }
+
                 .amfm-card .card-body {
                     flex: 1;
                     display: flex;

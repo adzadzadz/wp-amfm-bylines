@@ -118,13 +118,29 @@ class Amfm_Bylines_Admin
 	public function add_admin_menu()
 	{
 		add_menu_page(
-			__('AMFM Bylines', 'amfm-bylines'), // Page title
-			__('AMFM Bylines', 'amfm-bylines'), // Menu title
+			__('AMFM', 'amfm-bylines'), // Page title
+			__('AMFM', 'amfm-bylines'), // Menu title
 			'manage_options', // Capability
-			'amfm-bylines', // Menu slug
+			'amfm', // Menu slug
 			array($this, 'display_admin_page'), // Callback function
-			'dashicons-admin-generic', // Icon
+			'dashicons-admin-users', // Icon
 			2 // Position
+		);
+		add_submenu_page(
+			'amfm',
+			__('Bylines', 'amfm-bylines'),
+			__('Bylines', 'amfm-bylines'),
+			'manage_options',
+			'amfm', // Use the same slug as the main menu to hide it from the submenu list
+			array($this, 'display_admin_page')
+		);
+		add_submenu_page(
+			'amfm',
+			__('Shortcodes', 'amfm-bylines'),
+			__('Shortcodes', 'amfm-bylines'),
+			'manage_options',
+			'amfm-bylines-shortcodes',
+			array($this, 'display_shortcode_guide')
 		);
 	}
 
@@ -136,6 +152,10 @@ class Amfm_Bylines_Admin
 	public function display_admin_page()
 	{
 		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-admin-display.php';
+	}
+
+	public function display_shortcode_guide() {
+		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-shortcodes.php';
 	}
 
 	public function fetch_pages()
