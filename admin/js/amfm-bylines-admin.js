@@ -78,7 +78,7 @@
 	});
 
 	// Media handler
-	jQuery(document).ready(function ($) {
+	$(document).ready(function ($) {
 		$('#upload_image_button').on('click', function (e) {
 			e.preventDefault();
 			var mediaFrame;
@@ -110,7 +110,7 @@
 	});
 
 	// Page Selector
-	jQuery(document).ready(function($) {
+	$(document).ready(function($) {
 		function fetchPages() {
 			$.ajax({
 				url: amfmLocalize.ajax_url,
@@ -143,7 +143,7 @@
 	});
 
 	// Ajax CRUD
-	jQuery(document).ready(function($) {
+	$(document).ready(function($) {
 		$('#amfm-bylines-form').on('submit', function(e) {
 			e.preventDefault();
 
@@ -210,7 +210,7 @@
 	});
 
 	$(document).ready(function () {
-		$('.amfm-card').on('click', function () {
+		$('.amfm-card-item').on('click', function () {
 			var cardData = $(this).data();
 			$('#name').val(cardData.name);
 			$('#image_url').val(cardData.image);
@@ -233,30 +233,50 @@
 			$('#amfmDrawer').addClass('open');
 			$('#amfm-bylines-form button[type="reset"]').hide(); // Hide reset button
 			$('#amfm-bylines-form button[type="submit"]').text('Save'); // Change submit button text to "Save"
+			$('#amfm-remove-byline').show();
 		});
 
 		$('#amfm-create-card').on('click', function () {
+			$('#amfm-bylines-form')[0].reset(); // Reset all form inputs
 			$('#amfm-bylines-form button[type="reset"]').show(); // Show reset button
 			$('#amfm-bylines-form button[type="submit"]').text('Submit'); // Change submit button text to "Submit"
+			$('#amfm-remove-byline').hide();
 		});
 
-		$('.delete-byline').on('click', function (e) {
-			e.stopPropagation();
-			var bylineId = $(this).data('id');
-			if (confirm('Are you sure you want to delete this byline?')) {
+	});
+
+	$(document).ready(function () {
+		$('#amfm-remove-byline').on('click', function () {
+			var bylineId = $('#byline_id').val();
+
+			console.log("STARTS");
+
+			console.log(amfmLocalize);
+
+			console.log(bylineId); 
+
+			if (bylineId && confirm('Are you sure you want to delete this byline?')) {
 				$.ajax({
 					url: amfmLocalize.ajax_url,
 					method: 'POST',
 					data: {
-						action: 'delete_amfm_byline',
-						nonce: amfmLocalize.deleteBylineNonce,
+						action: 'remove_amfm_byline',
+						nonce: amfmLocalize.removeBylineNonce,
 						id: bylineId
 					},
 					success: function (response) {
 						if (response.success) {
+							// console.log(response);
 							location.reload();
 						} else {
 							alert('There was an error deleting the byline.');
+						}
+					},
+					error: function (jqXHR) {
+						if (jqXHR.status === 403) {
+							alert('Unauthorized request. Please refresh the page and try again.');
+						} else {
+							alert('There was an error processing the request.');
 						}
 					}
 				});

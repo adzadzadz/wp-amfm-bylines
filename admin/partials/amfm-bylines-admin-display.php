@@ -53,14 +53,12 @@ $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
 
                 <?php foreach ($bylines as $byline) : ?>
                     <div class="col-3 mb-4">
-                        <div class="card amfm-card" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>" data-author-tag="<?php echo esc_attr($byline->authorTag); ?>" data-editor-tag="<?php echo esc_attr($byline->editorTag); ?>" data-reviewed-by-tag="<?php echo esc_attr($byline->reviewedByTag); ?>">
+                        <div class="card amfm-card amfm-card-item" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>" data-author-tag="<?php echo esc_attr($byline->authorTag); ?>" data-editor-tag="<?php echo esc_attr($byline->editorTag); ?>" data-reviewed-by-tag="<?php echo esc_attr($byline->reviewedByTag); ?>">
                             <div class="card-img-top" style="background-image: url('<?php echo esc_url($byline->profile_image); ?>'); background-size: cover; background-position: center; width: 100%; padding-top: 100%;"></div>
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo esc_html($byline->byline_name); ?></h5>
                                 <p class="card-text"><?php echo esc_html(wp_trim_words($byline->description, 10, '...')); ?></p>
-                                <button type="button" class="close delete-byline" data-id="<?php echo esc_attr($byline->id); ?>" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <!-- Remove delete button -->
                             </div>
                         </div>
                     </div>
@@ -168,6 +166,7 @@ $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
                 <div class="form-group">
                     <button type="reset" class="btn btn-secondary mt-3"><?php _e('Reset', 'amfm-bylines'); ?></button>
                     <button type="submit" class="btn btn-primary mt-3"><?php _e('Submit', 'amfm-bylines'); ?></button>
+                    <button type="button" class="btn btn-danger mt-3" id="amfm-remove-byline"><?php _e('Remove', 'amfm-bylines'); ?></button>
                 </div>
             </form>
         </div>

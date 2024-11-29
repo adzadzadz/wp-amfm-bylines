@@ -106,7 +106,7 @@ class Amfm_Bylines_Admin
 			'ajax_url' => admin_url('admin-ajax.php'),
 			'pageSelectorNonce' => wp_create_nonce('amfm_page_selector_nonce'),
 			'saveBylineNonce' => wp_create_nonce('amfm_save_byline_nonce'),
-			'deleteBylineNonce' => wp_create_nonce('amfm_delete_byline_nonce')
+			'removeBylineNonce' => wp_create_nonce('amfm_remove_byline_nonce')
 		));
 	}
 
@@ -305,20 +305,32 @@ class Amfm_Bylines_Admin
 		}
 	}
 
-	public function delete_amfm_byline()
+	public function remove_amfm_byline()
 	{
-		check_ajax_referer('amfm_delete_byline_nonce', 'nonce');
+		if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'amfm_remove_byline_nonce')) {
+			wp_send_json_error('Invalid nonce', 400);
+			wp_die();
+		}
+
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error('Insufficient permissions', 403);
+			wp_die();
+		}
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'amfm_bylines';
 		$id = intval($_POST['id']);
 
-		$deleted = $wpdb->delete($table_name, array('id' => $id), array('%d'));
+		if ($id <= 0) {
+			wp_send_json_error('Invalid byline ID', 400);
+			wp_die();
+		}
 
-		if ($deleted) {
-			wp_send_json_success();
+		$deleted = $wpdb->delete($wpdb->prefix . 'amfm_bylines', array('id' => $id), array('%d'));
+
+		if ($deleted !== false) {
+			wp_send_json_success('Byline deleted successfully');
 		} else {
-			wp_send_json_error('Error deleting byline.');
+			wp_send_json_error('Error deleting byline.', 500);
 		}
 	}
 }
