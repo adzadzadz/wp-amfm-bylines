@@ -20,7 +20,8 @@
  * @subpackage Amfm_Bylines/public
  * @author     Adrian T. Saycon <adzbite@gmail.com>
  */
-class Amfm_Bylines_Public {
+class Amfm_Bylines_Public
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,11 +48,11 @@ class Amfm_Bylines_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct($plugin_name, $version)
+	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -59,7 +60,8 @@ class Amfm_Bylines_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -73,8 +75,8 @@ class Amfm_Bylines_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/amfm-bylines-public.css', array(), $this->version, 'all' );
-
+		// wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), random_int(000, 999), 'all');
 	}
 
 	/**
@@ -82,7 +84,8 @@ class Amfm_Bylines_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -96,8 +99,13 @@ class Amfm_Bylines_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/amfm-bylines-public.js', array( 'jquery' ), $this->version, false );
-
+		// wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), random_int(000, 999), false);
+		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
+			'author' => $this->is_tagged('authored-by'),
+			'editor' => $this->is_tagged('edited-by'),
+			'reviewedBy' => $this->is_tagged('reviewed-by')
+		));
 	}
 
 	public function init()
@@ -206,31 +214,80 @@ class Amfm_Bylines_Public {
 				}
 
 				return $data;
-
 			}
 		}, 99, 2);
-		
 	}
 
+	/**
+	 * Get the byline data from the database
+	 * 
+	 * @param string $type
+	 * @return object|false
+	 */
 	private function get_byline($type)
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'amfm_bylines';
-		$bylines = $wpdb->get_results("SELECT * FROM $table_name");
 
-		foreach ($bylines as $byline) {
-			$byline_data = json_decode($byline->data, true);
-		
-			if (has_tag($byline->authorTag, get_queried_object_id()) && 'author' === $type) {
-				return $byline;
+		$tags = get_the_tags();
+
+		if ($tags) {
+			foreach ($tags as $tag) {
+				if (strpos($tag->slug, 'authored-by') === 0 && $type === 'author') {
+					return $wpdb->get_row("SELECT * FROM $table_name WHERE authorTag = '$tag->slug'");
+				}
+
+				if (strpos($tag->slug, 'edited-by') === 0 && $type === 'editor') {
+					return $wpdb->get_row("SELECT * FROM $table_name WHERE editorTag = '$tag->slug'");
+				}
+
+				if (strpos($tag->slug, 'reviewed-by') === 0 && $type === 'reviewedBy') {
+					return $wpdb->get_row("SELECT * FROM $table_name WHERE reviewedByTag = '$tag->slug'");
+				}
 			}
+		}
 
-			if (has_tag($byline->editorTag, get_queried_object_id()) && 'editor' === $type) {
-				return $byline;
-			}
+		return false;
+	}
 
-			if (has_tag($byline->reviewedByTag, get_queried_object_id()) && 'reviewedBy' === $type) {
-				return $byline;
+	/**
+	 * Get the byline url
+	 */
+	private function get_byline_url($type)
+	{
+		$byline = $this->get_byline('author');
+		if (!$byline)
+			return "No byline found";
+
+		$byline_data = json_decode($byline->data, true);
+
+		return preg_replace('/^https?:\/\//', '', $byline_data['page_url']);
+	}
+
+	/**
+	 * Check if the post is tagged with the given tag
+	 * 
+	 * @param string $tag
+	 * @param string $type
+	 * @return boolean
+	 */
+	private function is_tagged($tag)
+	{
+		$tags = get_the_tags();
+
+		if ($tags) {
+			foreach ($tags as $t) {
+				if (strpos($t->slug, $tag) === 0) {
+					return true;
+				}
+
+				if (strpos($t->slug, $tag) === 0) {
+					return true;
+				}
+
+				if (strpos($t->slug, $tag) === 0) {
+					return true;
+				}
 			}
 		}
 
@@ -240,62 +297,6 @@ class Amfm_Bylines_Public {
 	// create a shortcode to display bylines
 	public function run_shortcodes()
 	{
-		/**
-		 * Usage: [amfm_info type="editor" data="job_title"]
-		 * type: author, editor, reviewedBy
-		 * data: name, credentials, job_title, page_url, img
-		 * 
-		 * returns raw text
-		 */
-		add_shortcode('amfm_info', function ($atts) {
-			$type = $atts['type']; # author, editor, reviewedBy
-			$data = $atts['data']; # name, credentials, job_title, page_url
-
-			$output = '';
-
-			if (!in_array($type, ['author', 'editor', 'reviewedBy'])) {
-				return "Type must be either 'author', 'editor', 'reviewedBy'";
-			}
-
-			if (!in_array($data, ['name', 'credentials', 'job_title', 'page_url', 'img'])) {
-				return "Data must be either 'name', 'credentials', 'job_title', or 'page_url', 'img'";
-			}
-			
-			$byline = $this->get_byline($type);
-			if (!$byline)
-				return "No byline found";
-
-			$byline_data = json_decode($byline->data, true);
-
-			switch ($data) {
-				case 'name':
-					$output = $byline->byline_name;
-					break;
-				case 'credentials':
-					$output = $byline_data['honorificSuffix'];
-					break;
-				case 'job_title':
-					$output = $byline_data['jobTitle'];
-					break;
-				case 'page_url':
-					$output = preg_replace('/^https?:\/\//', '', $byline_data['page_url']);
-					break;
-				case 'img':
-					$profile_url = $byline->profile_image ? $byline->profile_image : plugin_dir_url(__FILE__) . 'placeholder.jpeg';
-					$name = $byline->byline_name;
-					$output = <<<HTML
-						<div style="text-align: center; display: inline-block;">
-							<img 
-								style="width: 40px; border-radius: 50%; border: 2px #00245d solid;" 
-								src="$profile_url" 
-								alt="$name" />
-						</div>
-					HTML;
-					break;
-			}
-
-			return "$output";
-		});
+		include plugin_dir_path(__FILE__) . 'partials/shortcodes/info.php';
 	}
-
 }
