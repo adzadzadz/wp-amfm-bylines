@@ -146,7 +146,8 @@ class Amfm_Bylines_Public
 								'name' => $byline_data['hasCredential']['name']
 							),
 							'worksFor' => array(
-								'@type' => $byline_data['worksFor']['@type'],
+								// '@type' => $byline_data['worksFor']['@type'],
+								'@type' => 'Organization',
 								'name' => $byline_data['worksFor']['name']
 							)
 						);
@@ -166,7 +167,8 @@ class Amfm_Bylines_Public
 								'name' => $byline_data['hasCredential']['name']
 							),
 							'worksFor' => array(
-								'@type' => $byline_data['worksFor']['@type'],
+								// '@type' => $byline_data['worksFor']['@type'],
+								'@type' => 'Organization',
 								'name' => $byline_data['worksFor']['name']
 							)
 						);
@@ -186,7 +188,8 @@ class Amfm_Bylines_Public
 								'name' => $byline_data['hasCredential']['name']
 							),
 							'worksFor' => array(
-								'@type' => $byline_data['worksFor']['@type'],
+								// '@type' => $byline_data['worksFor']['@type'],
+								'@type' => 'Organization',
 								'name' => $byline_data['worksFor']['name']
 							)
 						);
