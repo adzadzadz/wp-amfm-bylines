@@ -238,6 +238,7 @@
 
 		$('#amfm-create-card').on('click', function () {
 			$('#amfm-bylines-form')[0].reset(); // Reset all form inputs
+			$('#byline_id').val(''); // Clear the byline_id field
 			$('#amfm-bylines-form button[type="reset"]').show(); // Show reset button
 			$('#amfm-bylines-form button[type="submit"]').text('Submit'); // Change submit button text to "Submit"
 			$('#amfm-remove-byline').hide();
