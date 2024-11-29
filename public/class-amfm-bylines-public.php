@@ -104,7 +104,7 @@ class Amfm_Bylines_Public
 		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
 			'author' => $this->is_tagged('authored-by'),
 			'editor' => $this->is_tagged('edited-by'),
-			'reviewedBy' => $this->is_tagged('reviewed-by')
+			'reviewedBy' => $this->is_tagged('medically-reviewed-by')
 		));
 	}
 
@@ -241,7 +241,7 @@ class Amfm_Bylines_Public
 					return $wpdb->get_row("SELECT * FROM $table_name WHERE editorTag = '$tag->slug'");
 				}
 
-				if (strpos($tag->slug, 'reviewed-by') === 0 && $type === 'reviewedBy') {
+				if (strpos($tag->slug, 'medically-reviewed-by') === 0 && $type === 'reviewedBy') {
 					return $wpdb->get_row("SELECT * FROM $table_name WHERE reviewedByTag = '$tag->slug'");
 				}
 			}
@@ -255,7 +255,7 @@ class Amfm_Bylines_Public
 	 */
 	private function get_byline_url($type)
 	{
-		$byline = $this->get_byline('author');
+		$byline = $this->get_byline($type);
 		if (!$byline)
 			return "No byline found";
 
