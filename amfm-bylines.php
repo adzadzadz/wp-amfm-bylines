@@ -16,7 +16,7 @@
  * Plugin Name:       AMFM Bylines
  * Plugin URI:        https://adzjo.online
  * Description:       Byline Management
- * Version:           1.0.1
+ * Version:           1.0.2
  * Author:            Adrian T. Saycon
  * Author URI:        https://adzjo.online/adz/
  * License:           GPL-2.0+
