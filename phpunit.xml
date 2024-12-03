@@ -1,16 +1,7 @@
-<phpunit>
+<phpunit bootstrap="tests/bootstrap.php">
     <testsuites>
         <testsuite name="Plugin Test Suite">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
-    <php>
-        <ini name="error_reporting" value="-1"/>
-        <ini name="display_errors" value="1"/>
-    </php>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./</directory>
-        </whitelist>
-    </filter>
 </phpunit>
