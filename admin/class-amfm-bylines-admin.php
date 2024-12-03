@@ -76,7 +76,7 @@ class Amfm_Bylines_Admin
 		 */
 
 		wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css', array(), '5.2.3', 'all');
-		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-admin.css', array(), random_int(000, 999), 'all');
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-admin.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -101,7 +101,7 @@ class Amfm_Bylines_Admin
 
 		wp_enqueue_media();
 		wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js', array('jquery'), '5.2.3', true);
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-admin.js', array('jquery'), random_int(000, 999), false);
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-admin.js', array('jquery'), $this->version, false);
 		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
 			'ajax_url' => admin_url('admin-ajax.php'),
 			'pageSelectorNonce' => wp_create_nonce('amfm_page_selector_nonce'),
