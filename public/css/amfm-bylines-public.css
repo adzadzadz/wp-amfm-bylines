@@ -3,6 +3,17 @@
  * included in this file.
  */
 
- #amfm-byline-wrapper {
-    /* display: none; */
- }
+#amfm-byline-wrapper {
+   /* display: none; */
+}
+
+@media (max-width: 768px) {
+   .amfm-byline-col {
+      width: 100%;
+   }
+
+   .amfm-byline-col>.elementor-widget-wrap {
+      border-left: none !important;
+      border-right: none !important;
+   }
+}
