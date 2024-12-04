@@ -7,6 +7,12 @@
    /* display: none; */
 }
 
+#amfm-byline-col-author,
+#amfm-byline-col-editor,
+#amfm-byline-col-reviewer {
+   display: none;
+}
+
 @media (max-width: 768px) {
    .amfm-byline-col {
       width: 100%;

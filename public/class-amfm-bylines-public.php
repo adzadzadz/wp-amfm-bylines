@@ -104,7 +104,7 @@ class Amfm_Bylines_Public
 		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
 			'author' => $this->is_tagged('authored-by'),
 			'editor' => $this->is_tagged('edited-by'),
-			'reviewedBy' => $this->is_tagged('medically-reviewed-by')
+			'reviewedBy' => $this->is_tagged('medically-reviewed-by') && $this->is_tagged('medicalwebpage', $precise = true),
 		));
 	}
 
@@ -198,18 +198,24 @@ class Amfm_Bylines_Public
 
 				foreach ($data as $key => $schema) {
 					if (isset($schema['@type']) && ($schema['@type'] === 'Article' || $schema['@type'] === 'MedicalWebPage')) {
+						// Remove existing author, editor, and reviewedBy if they exist
 						if (isset($data[$key]['author'])) {
 							unset($data[$key]['author']);
 						}
-
+						if (isset($data[$key]['editor'])) {
+							unset($data[$key]['editor']);
+						}
+						if (isset($data[$key]['reviewedBy'])) {
+							unset($data[$key]['reviewedBy']);
+						}
+				
+						// Add author, editor, and reviewedBy in the desired order
 						if (!empty($author_schema)) {
 							$data[$key]['author'] = $author_schema;
 						}
-
 						if (!empty($editor_schema)) {
 							$data[$key]['editor'] = $editor_schema;
 						}
-
 						if (!empty($reviewedBy_schema) && isset($data[$key]['@type']) && $data[$key]['@type'] === 'MedicalWebPage') {
 							$data[$key]['reviewedBy'] = $reviewedBy_schema;
 						}
@@ -234,6 +240,8 @@ class Amfm_Bylines_Public
 
 		$tags = get_the_tags();
 
+		$is_medical_webpage = has_tag('medicalwebpage', get_queried_object_id());
+
 		if ($tags) {
 			foreach ($tags as $tag) {
 				if (strpos($tag->slug, 'authored-by') === 0 && $type === 'author') {
@@ -244,7 +252,7 @@ class Amfm_Bylines_Public
 					return $wpdb->get_row("SELECT * FROM $table_name WHERE editorTag = '$tag->slug'");
 				}
 
-				if (strpos($tag->slug, 'medically-reviewed-by') === 0 && $type === 'reviewedBy') {
+				if ($is_medical_webpage && strpos($tag->slug, 'medically-reviewed-by') === 0 && $type === 'reviewedBy') {
 					return $wpdb->get_row("SELECT * FROM $table_name WHERE reviewedByTag = '$tag->slug'");
 				}
 			}
@@ -274,20 +282,16 @@ class Amfm_Bylines_Public
 	 * @param string $type
 	 * @return boolean
 	 */
-	private function is_tagged($tag)
+	private function is_tagged($tag, $precise = false)
 	{
+		if ($precise) {
+			return has_tag($tag, get_queried_object_id());
+		}
+		
 		$tags = get_the_tags();
-
-		if ($tags) {
+		
+		if (!$precise && $tags) {
 			foreach ($tags as $t) {
-				if (strpos($t->slug, $tag) === 0) {
-					return true;
-				}
-
-				if (strpos($t->slug, $tag) === 0) {
-					return true;
-				}
-
 				if (strpos($t->slug, $tag) === 0) {
 					return true;
 				}
