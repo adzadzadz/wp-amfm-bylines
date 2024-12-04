@@ -42,11 +42,11 @@ $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
 
                 <?php foreach ($bylines as $byline) : ?>
                     <div class="col-6 col-md-4 col-lg-3 mb-4">
-                        <div class="card amfm-card amfm-card-item" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr($byline->byline_name); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr($byline->description); ?>" data-data="<?php echo esc_attr($byline->data); ?>" data-author-tag="<?php echo esc_attr($byline->authorTag); ?>" data-editor-tag="<?php echo esc_attr($byline->editorTag); ?>" data-reviewed-by-tag="<?php echo esc_attr($byline->reviewedByTag); ?>">
+                        <div class="card amfm-card amfm-card-item" data-id="<?php echo esc_attr($byline->id); ?>" data-name="<?php echo esc_attr(stripslashes($byline->byline_name)); ?>" data-image="<?php echo esc_url($byline->profile_image); ?>" data-description="<?php echo esc_attr(stripslashes($byline->description)); ?>" data-data="<?php echo esc_attr(stripslashes($byline->data)); ?>" data-author-tag="<?php echo esc_attr(stripslashes($byline->authorTag)); ?>" data-editor-tag="<?php echo esc_attr(stripslashes($byline->editorTag)); ?>" data-reviewed-by-tag="<?php echo esc_attr(stripslashes($byline->reviewedByTag)); ?>">
                             <div class="card-img-top" style="background-image: url('<?php echo esc_url($byline->profile_image); ?>'); background-size: cover; background-position: center; width: 100%; padding-top: 100%;"></div>
                             <div class="card-body">
-                                <h5 class="card-title"><?php echo esc_html($byline->byline_name); ?></h5>
-                                <p class="card-text"><?php echo esc_html(wp_trim_words($byline->description, 10, '...')); ?></p>
+                                <h5 class="card-title"><?php echo esc_html(stripslashes($byline->byline_name)); ?></h5>
+                                <p class="card-text"><?php echo esc_html(stripslashes(wp_trim_words($byline->description, 10, '...'))); ?></p>
                                 <!-- Remove delete button -->
                             </div>
                         </div>
