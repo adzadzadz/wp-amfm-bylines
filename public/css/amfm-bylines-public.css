@@ -13,7 +13,30 @@
    display: none;
 }
 
+.amfm-border-left {
+   position: absolute;
+   width: 1px;
+   height: 75%;
+   background-color: #1E2945;
+   left: 0;
+   top: 14%;
+}
+
+@media (max-width: 1024px) {
+
+   /* commons */
+   .amfm-border-left {
+      left: -3% !important;
+   }
+}
+
 @media (max-width: 768px) {
+
+   /* commons */
+   .amfm-border-left {
+      display: none;
+   }
+
    .amfm-byline-col {
       width: 100%;
    }
