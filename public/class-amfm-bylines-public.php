@@ -208,6 +208,12 @@ class Amfm_Bylines_Public
 						if (isset($data[$key]['reviewedBy'])) {
 							unset($data[$key]['reviewedBy']);
 						}
+
+						// force schema type to MedicalWebPage if the post is tagged with medicalwebpage
+						$is_medical_webpage = has_tag('medicalwebpage', get_queried_object_id());
+						if ($is_medical_webpage) {
+							$data[$key]['@type'] = 'MedicalWebPage';
+						}
 				
 						// Add author, editor, and reviewedBy in the desired order
 						if (!empty($author_schema)) {
