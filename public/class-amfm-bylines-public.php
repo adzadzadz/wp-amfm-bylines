@@ -118,82 +118,81 @@ class Amfm_Bylines_Public
 	{
 		add_filter('rank_math/json_ld', function ($data, $jsonld) {
 			if (is_singular('post') || is_page()) {
-
-				// get all bylines from database
-				global $wpdb;
-				$table_name = $wpdb->prefix . 'amfm_bylines';
-				$bylines = $wpdb->get_results("SELECT * FROM $table_name");
+				
+				// Get the byline data
+				$author_byline = $this->get_byline('author');
+				$editor_byline = $this->get_byline('editor');
+				$reviewer_byline = $this->get_byline('reviewedBy');
 
 				// Build the author array and should contain bylines with author tags
 				$author_schema = array();
 				$editor_schema = array();
-				$reviewedBy_schema = array();
+				$reviewer_schema = array();
 
-				foreach ($bylines as $byline) {
-					$byline_data = json_decode($byline->data, true);
+				if ($author_byline) {
+					$author_data = json_decode($author_byline->data, true);
+					$author_schema = array(
+						'@type' => 'Person',
+						'url' => $author_data['page_url'],
+						'image' => $author_byline->profile_image,
+						'name' => str_replace("'", "", str_replace("\\", "", $author_byline->byline_name)),
+						'honorificSuffix' => $author_data['honorificSuffix'],
+						'description' => str_replace("'", "", str_replace("\\", "", $author_byline->description)),
+						'jobTitle' => $author_data['jobTitle'],
+						'hasCredential' => array(
+							'@type' => $author_data['hasCredential']['@type'],
+							'name' => $author_data['hasCredential']['name']
+						),
+						'worksFor' => array(
+							// '@type' => $author_data['worksFor']['@type'],
+							'@type' => 'Organization',
+							'name' => $author_data['worksFor']['name']
+						)
+					);
+				}
 
-					if (has_tag($byline->authorTag, get_queried_object_id())) {
-						$author_schema = array(
-							'@type' => 'Person',
-							'url' => $byline_data['page_url'],
-							'image' => $byline->profile_image,
-							'name' => str_replace("'", "", str_replace("\\", "", $byline->byline_name)),
-							'honorificSuffix' => $byline_data['honorificSuffix'],
-							'description' => str_replace("'", "", str_replace("\\", "", $byline->description)),
-							'jobTitle' => $byline_data['jobTitle'],
-							'hasCredential' => array(
-								'@type' => $byline_data['hasCredential']['@type'],
-								'name' => $byline_data['hasCredential']['name']
-							),
-							'worksFor' => array(
-								// '@type' => $byline_data['worksFor']['@type'],
-								'@type' => 'Organization',
-								'name' => $byline_data['worksFor']['name']
-							)
-						);
-					}
+				if ($editor_byline) {
+					$editor_data = json_decode($editor_byline->data, true);
+					$editor_schema = array(
+						'@type' => 'Person',
+						'url' => $editor_data['page_url'],
+						'image' => $editor_byline->profile_image,
+						'name' => str_replace("'", "", str_replace("\\", "", $editor_byline->byline_name)),
+						'honorificSuffix' => $editor_data['honorificSuffix'],
+						'description' => str_replace("'", "", str_replace("\\", "", $editor_byline->description)),
+						'jobTitle' => $editor_data['jobTitle'],
+						'hasCredential' => array(
+							'@type' => $editor_data['hasCredential']['@type'],
+							'name' => $editor_data['hasCredential']['name']
+						),
+						'worksFor' => array(
+							// '@type' => $editor_data['worksFor']['@type'],
+							'@type' => 'Organization',
+							'name' => $editor_data['worksFor']['name']
+						)
+					);
+				}
 
-					if (has_tag($byline->editorTag, get_queried_object_id())) {
-						$editor_schema = array(
-							'@type' => 'Person',
-							'url' => $byline_data['page_url'],
-							'image' => $byline->profile_image,
-							'name' => str_replace("'", "", str_replace("\\", "", $byline->byline_name)),
-							'honorificSuffix' => $byline_data['honorificSuffix'],
-							'description' => str_replace("'", "", str_replace("\\", "", $byline->description)),
-							'jobTitle' => $byline_data['jobTitle'],
-							'hasCredential' => array(
-								'@type' => $byline_data['hasCredential']['@type'],
-								'name' => $byline_data['hasCredential']['name']
-							),
-							'worksFor' => array(
-								// '@type' => $byline_data['worksFor']['@type'],
-								'@type' => 'Organization',
-								'name' => $byline_data['worksFor']['name']
-							)
-						);
-					}
-
-					if (has_tag($byline->reviewedByTag, get_queried_object_id())) {
-						$reviewedBy_schema = array(
-							'@type' => 'Person',
-							'url' => $byline_data['page_url'],
-							'image' => $byline->profile_image,
-							'name' => str_replace("'", "", str_replace("\\", "", $byline->byline_name)),
-							'honorificSuffix' => $byline_data['honorificSuffix'],
-							'description' => str_replace("'", "", str_replace("\\", "", $byline->description)),
-							'jobTitle' => $byline_data['jobTitle'],
-							'hasCredential' => array(
-								'@type' => $byline_data['hasCredential']['@type'],
-								'name' => $byline_data['hasCredential']['name']
-							),
-							'worksFor' => array(
-								// '@type' => $byline_data['worksFor']['@type'],
-								'@type' => 'Organization',
-								'name' => $byline_data['worksFor']['name']
-							)
-						);
-					}
+				if ($reviewer_byline) {
+					$reviewer_data = json_decode($reviewer_byline->data, true);
+					$reviewer_schema = array(
+						'@type' => 'Person',
+						'url' => $reviewer_data['page_url'],
+						'image' => $reviewer_byline->profile_image,
+						'name' => str_replace("'", "", str_replace("\\", "", $reviewer_byline->byline_name)),
+						'honorificSuffix' => $reviewer_data['honorificSuffix'],
+						'description' => str_replace("'", "", str_replace("\\", "", $reviewer_byline->description)),
+						'jobTitle' => $reviewer_data['jobTitle'],
+						'hasCredential' => array(
+							'@type' => $reviewer_data['hasCredential']['@type'],
+							'name' => $reviewer_data['hasCredential']['name']
+						),
+						'worksFor' => array(
+							// '@type' => $reviewer_data['worksFor']['@type'],
+							'@type' => 'Organization',
+							'name' => $reviewer_data['worksFor']['name']
+						)
+					);
 				}
 
 				foreach ($data as $key => $schema) {
@@ -222,8 +221,8 @@ class Amfm_Bylines_Public
 						if (!empty($editor_schema)) {
 							$data[$key]['editor'] = $editor_schema;
 						}
-						if (!empty($reviewedBy_schema) && isset($data[$key]['@type']) && $data[$key]['@type'] === 'MedicalWebPage') {
-							$data[$key]['reviewedBy'] = $reviewedBy_schema;
+						if (!empty($reviewer_schema) && isset($data[$key]['@type']) && $data[$key]['@type'] === 'MedicalWebPage') {
+							$data[$key]['reviewedBy'] = $reviewer_schema;
 						}
 					}
 				}
