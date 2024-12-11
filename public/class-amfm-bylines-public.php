@@ -309,11 +309,10 @@ class Amfm_Bylines_Public
 	// create a shortcode to display bylines
 	public function run_shortcodes()
 	{
-		add_action( 'acf/init', function() {
-			if ( function_exists( 'acf_update_setting' ) ) {
-				acf_update_setting( 'enable_shortcode', true );
-			}
-		});
 		include plugin_dir_path(__FILE__) . 'partials/shortcodes/info.php';
+
+		if (class_exists('ACF')) {
+			include plugin_dir_path(__FILE__) . 'partials/shortcodes/acf.php';
+		}
 	}
 }
