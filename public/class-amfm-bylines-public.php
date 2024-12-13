@@ -128,12 +128,118 @@ class Amfm_Bylines_Public
 	public function manage_bylines_schema_with_staff_cpt()
 	{
 		add_filter('rank_math/json_ld', function ($data, $jsonld) {
+			
 			if (is_singular('post') || is_page()) {
 
 				// get this post/page author, editor, and reviewedBy tags
 				$author_byline = $this->get_byline('author', true);
 				$editor_byline = $this->get_byline('editor', true);
 				$reviewer_byline = $this->get_byline('reviewedBy', true);
+
+				
+				// In this context get_byline returns the post object. I need to get the custom field values from the post object
+				// Build the author array and should contain bylines with author tags
+				$author_schema = array();
+				$editor_schema = array();
+				$reviewer_schema = array();
+
+				if ($author_byline) {
+					$author_data = get_fields($author_byline->ID);
+					$author_schema = array(
+						'@type' => 'Person',
+						'url' => get_permalink($author_byline->ID),
+						'image' => get_the_post_thumbnail_url($author_byline->ID),
+						'name' => $author_byline->post_title,
+						'honorificSuffix' => $author_data['honorific_suffix'],
+						'description' => $author_data['description'],
+						'jobTitle' => $author_data['job_title'],
+						'hasCredential' => array(
+							'@type' => 'EducationalOccupationalCredential',
+							'name' => $author_data['credential_name']
+						),
+						'worksFor' => array(
+							'@type' => 'Organization',
+							'name' => $author_data['works_for']
+						)
+					);
+				}
+
+				if ($editor_byline) {
+					$editor_data = get_fields($editor_byline->ID);
+					$editor_schema = array(
+						'@type' => 'Person',
+						'url' => get_permalink($editor_byline->ID),
+						'image' => get_the_post_thumbnail_url($editor_byline->ID),
+						'name' => $editor_byline->post_title,
+						'honorificSuffix' => $editor_data['honorific_suffix'],
+						'description' => $editor_data['description'],
+						'jobTitle' => $editor_data['job_title'],
+						'hasCredential' => array(
+							'@type' => 'EducationalOccupationalCredential',
+							'name' => $editor_data['credential_name']
+						),
+						'worksFor' => array(
+							'@type' => 'Organization',
+							'name' => $editor_data['works_for']
+						)
+					);
+				}
+
+				if ($reviewer_byline) {
+					$reviewer_data = get_fields($reviewer_byline->ID);
+					$reviewer_schema = array(
+						'@type' => 'Person',
+						'url' => get_permalink($reviewer_byline->ID),
+						'image' => get_the_post_thumbnail_url($reviewer_byline->ID),
+						'name' => $reviewer_byline->post_title,
+						'honorificSuffix' => $reviewer_data['honorific_suffix'],
+						'description' => $reviewer_data['description'],
+						'jobTitle' => $reviewer_data['job_title'],
+						'hasCredential' => array(
+							'@type' => 'EducationalOccupationalCredential',
+							'name' => $reviewer_data['credential_name']
+						),
+						'worksFor' => array(
+							'@type' => 'Organization',
+							'name' => $reviewer_data['works_for']
+						)
+					);
+				}
+
+				foreach ($data as $key => $schema) {
+
+					if (isset($schema['@type']) && ($schema['@type'] === 'Article' || $schema['@type'] === 'MedicalWebPage')) {
+						// Remove existing author, editor, and reviewedBy if they exist
+						if (isset($data[$key]['author'])) {
+							unset($data[$key]['author']);
+						}
+						if (isset($data[$key]['editor'])) {
+							unset($data[$key]['editor']);
+						}
+						if (isset($data[$key]['reviewedBy'])) {
+							unset($data[$key]['reviewedBy']);
+						}
+
+						// force schema type to MedicalWebPage if the post is tagged with medicalwebpage
+						$is_medical_webpage = has_tag('medicalwebpage', get_queried_object_id());
+						if ($is_medical_webpage) {
+							$data[$key]['@type'] = 'MedicalWebPage';
+						}
+
+						// Add author, editor, and reviewedBy in the desired order
+						if (!empty($author_schema)) {
+							$data[$key]['author'] = $author_schema;
+						}
+						if (!empty($editor_schema)) {
+							$data[$key]['editor'] = $editor_schema;
+						}
+						if (!empty($reviewer_schema) && isset($data[$key]['@type']) && $data[$key]['@type'] === 'MedicalWebPage') {
+							$data[$key]['reviewedBy'] = $reviewer_schema;
+						}
+					}
+				}
+
+				return $data;
 			}
 		}, 99, 2);
 	}
@@ -322,7 +428,7 @@ class Amfm_Bylines_Public
 		if (empty($staff)) {
 			return false;
 		}
-		return $staff;
+		return $staff[0];
 	}
 
 	/**
