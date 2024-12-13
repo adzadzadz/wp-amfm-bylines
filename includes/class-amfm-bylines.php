@@ -162,6 +162,7 @@ class Amfm_Bylines {
 		$this->loader->add_action('wp_ajax_fetch_pages', $plugin_admin, 'fetch_pages');
 		$this->loader->add_action('wp_ajax_save_amfm_bylines', $plugin_admin, 'save_amfm_bylines');
 		$this->loader->add_action('wp_ajax_remove_amfm_byline', $plugin_admin, 'remove_amfm_byline');
+		$this->loader->add_action('wp_ajax_toggle_function', $plugin_admin, 'toggle_function');
 	}
 
 	/**

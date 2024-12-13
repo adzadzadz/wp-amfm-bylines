@@ -284,4 +284,26 @@
 			}
 		});
 	});
+
+	$(document).ready(function() {
+		$('#functionToggle').change(function() {
+			var isActive = $(this).is(':checked');
+			
+			$.ajax({
+				url: ajaxurl, // WordPress AJAX URL
+				type: 'POST',
+				data: {
+					action: 'toggle_function',
+					is_active: isActive
+				},
+				success: function(response) {
+					alert('Function ' + (isActive ? 'activated' : 'deactivated') + ' successfully.');
+				},
+				error: function(xhr, status, error) {
+					alert('An error occurred: ' + error);
+				}
+			});
+		});
+	});
+	
 })(jQuery);

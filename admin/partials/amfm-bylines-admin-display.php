@@ -18,6 +18,13 @@ $bylines = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}amfm_bylines");
 
 $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
 
+// if option amfm_use_staff_cpt doesn't exist, create it and set it to false
+if (!get_option('amfm_use_staff_cpt')) {
+    add_option('amfm_use_staff_cpt', false);
+}
+
+$use_staff_cpt = get_option('amfm_use_staff_cpt');
+
 ?>
 
 <div class="wrap">
@@ -26,6 +33,13 @@ $placeholder = plugin_dir_url(__FILE__) . "placeholder.jpeg";
 </div>
 
 <div id="flash-message-container"></div>
+
+<!-- Bootstrap 5 Toggle Switch -->
+<div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="functionToggle" <?php echo $use_staff_cpt ? 'checked' : ''; ?> style="width: 50px; height: 25px;">
+    <label class="form-check-label" for="functionToggle" style="font-size: 1.2em; margin-top: -8px;">Use "Staff" CPT instead?</label>
+</div>
+
 
 <div class="wrap">
     <div class="row">
