@@ -163,6 +163,7 @@ class Amfm_Bylines {
 		$this->loader->add_action('wp_ajax_save_amfm_bylines', $plugin_admin, 'save_amfm_bylines');
 		$this->loader->add_action('wp_ajax_remove_amfm_byline', $plugin_admin, 'remove_amfm_byline');
 		$this->loader->add_action('wp_ajax_toggle_function', $plugin_admin, 'toggle_function');
+		$this->loader->add_action('init', $plugin_admin, 'add_categories_and_tags_to_pages');
 	}
 
 	/**

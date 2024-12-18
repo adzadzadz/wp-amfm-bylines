@@ -154,20 +154,20 @@ class Amfm_Bylines_Admin
 		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-admin-display.php';
 	}
 
-	public function display_shortcode_guide() 
+	public function display_shortcode_guide()
 	{
 		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-shortcodes.php';
 	}
 
-	public function toggle_function() 
+	public function toggle_function()
 	{
 		// Check if the request is valid
 		if (!isset($_POST['is_active'])) {
 			wp_send_json_error('Invalid request');
 		}
-	
+
 		$is_active = filter_var($_POST['is_active'], FILTER_VALIDATE_BOOLEAN);
-	
+
 		// Activate or deactivate the function based on the value of $is_active
 		if ($is_active) {
 			// Save option "amfm_use_staff_cpt" with value "1". Create the option if it doesn't already exist
@@ -176,7 +176,7 @@ class Amfm_Bylines_Admin
 			// Save option "amfm_use_staff_cpt" with value "0". Create the option if it doesn't already exist
 			update_option('amfm_use_staff_cpt', 0);
 		}
-	
+
 		wp_send_json_success();
 	}
 
@@ -374,5 +374,20 @@ class Amfm_Bylines_Admin
 		} else {
 			wp_send_json_error('Error deleting byline.', 500);
 		}
+	}
+
+	/**
+	 * Adds categories and tags support to pages.
+	 *
+	 * This function registers the 'category' and 'post_tag' taxonomies for the 'page' post type,
+	 * allowing pages to be categorized and tagged similarly to posts.
+	 *
+	 * @return void
+	 */
+
+	public function add_categories_and_tags_to_pages()
+	{
+		register_taxonomy_for_object_type('category', 'page');
+		register_taxonomy_for_object_type('post_tag', 'page');
 	}
 }
