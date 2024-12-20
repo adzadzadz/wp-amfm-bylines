@@ -31,7 +31,20 @@
 
 	// Open and close drawer
 	$(document).ready(function () {
+		
+		$("#amfm-create-staff").on('click', function () {
+			// clicking this id redirects to the staff cpt create new page
+			window.location.href = "/wp-admin/post-new.php?post_type=staff";
+		});
+
 		$('.amfm-card').on('click', function () {
+
+			// check if card has class amfm-card-staff-item, if so, redirect using the data-url attribute
+			if ($(this).hasClass('amfm-card-staff-item')) {
+				var url = $(this).data('url');
+				window.location.href = url;
+				return;
+			}
 
 			// check if clicked card has id "amfm-create-card", if so, open drawer with empty fields
 			if ($(this).attr('id') === 'amfm-create-card') {
@@ -134,7 +147,7 @@
 			});
 		}
 
-		fetchPages();
+		// fetchPages();
 
 		$('#page_selector').on('change', function() {
 			var selectedUrl = $(this).val();

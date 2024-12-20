@@ -16,7 +16,7 @@
  * Plugin Name:       AMFM Bylines
  * Plugin URI:        https://adzjo.online
  * Description:       Byline Management
- * Version:           2.0.1
+ * Version:           2.0.3
  * Author:            Adrian T. Saycon
  * Author URI:        https://adzjo.online/adz/
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'AMFM_BYLINES_VERSION', '2.0.1' );
+define( 'AMFM_BYLINES_VERSION', '2.0.3' );
 
 /**
  * The code that runs during plugin activation.
