@@ -1,9 +1,15 @@
 <?php 
 
+// Ensure WordPress environment is loaded
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 // get all data from the Staff CPT
 $bylines = get_posts(array(
     'post_type' => 'staff',
-    'numberposts' => -1
+    'numberposts' => -1,
+    'order' => 'ASC'
 ));
 
 ?>
