@@ -76,7 +76,7 @@ class Amfm_Bylines_Public
 		 */
 
 		// wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
-		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), random_int(0000,9999), 'all');
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -99,8 +99,8 @@ class Amfm_Bylines_Public
 		 * class.
 		 */
 
-		// wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), random_int(0000,9999), false);
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), random_int(0000,9999), false);
+		// wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), $this->version, false);
 		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
 			'author' => $this->is_tagged('authored-by'),
 			'editor' => $this->is_tagged('edited-by'),
