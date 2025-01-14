@@ -93,13 +93,8 @@ add_shortcode('amfm_info', function ($atts) {
                 $profile_url = $staff_profile_image ? $staff_profile_image : plugin_dir_url(__FILE__) . 'placeholder.jpeg';
                 $name = $byline->post_title;
                 $output = <<<HTML
-						<div style="text-align: center; display: inline-block;">
-							<img 
-								style="width: 40px; border-radius: 50%; border: 2px #00245d solid;" 
-								src="$profile_url" 
-								alt="$name" />
-						</div>
-					HTML;
+                    <img src="$profile_url" alt="$name" />
+                HTML;
                 break;
         }
     }
@@ -132,4 +127,69 @@ add_shortcode('amfm_editor_url', function ($atts) {
  */
 add_shortcode('amfm_reviewer_url', function ($atts) {
     return (string) $this->get_byline_url('reviewedBy');
+});
+
+add_shortcode('amfm_bylines_grid', function ($atts) {
+    
+    $output = '';
+
+    $author = [
+        "name" => do_shortcode('[amfm_info type="author" data="name"]'),
+        "title" => do_shortcode('[amfm_info type="author" data="job_title"]'),
+        "credentials" => do_shortcode('[amfm_info type="author" data="credentials"]'),
+        "img" => do_shortcode('[amfm_info type="author" data="img"]')
+    ];
+
+    $editor = [
+        "name" => do_shortcode('[amfm_info type="editor" data="name"]'),
+        "title" => do_shortcode('[amfm_info type="editor" data="job_title"]'),
+        "credentials" => do_shortcode('[amfm_info type="editor" data="credentials"]'),
+        "img" => do_shortcode('[amfm_info type="editor" data="img"]')
+    ];
+
+    $reviewer = [
+        "name" => do_shortcode('[amfm_info type="reviewedBy" data="name"]'),
+        "title" => do_shortcode('[amfm_info type="reviewedBy" data="job_title"]'),
+        "credentials" => do_shortcode('[amfm_info type="reviewedBy" data="credentials"]'),
+        "img" => do_shortcode('[amfm_info type="reviewedBy" data="img"]')
+    ];
+
+    $output .= <<<HTML
+    <div class="amfm-bylines-container">
+        <!-- Column 1 -->
+        <div class="amfm-column" id="amfm-byline-col-author">
+            <div class="amfm-text">Author:</div>
+            <div class="amfm-image">{$author['img']}</div>
+            <div class="amfm-row-text-container">
+                <div class="amfm-row-text-name">{$author['name']}</div>
+                <div class="amfm-row-text-credentials">{$author['credentials']}</div>
+                <div class="amfm-row-text-title">{$author['title']}</div>
+            </div>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="amfm-column" id="amfm-byline-col-editor">
+            <div class="amfm-text">Editor:</div>
+            <div class="amfm-image">{$editor['img']}</div>
+            <div class="amfm-row-text-container">
+                <div class="amfm-row-text-name">{$editor['name']}</div>
+                <div class="amfm-row-text-credentials">{$editor['credentials']}</div>
+                <div class="amfm-row-text-title">{$editor['title']}</div>
+            </div>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="amfm-column" id="amfm-byline-col-reviewer">
+            <div class="amfm-text">Reviewer:</div>
+            <div class="amfm-image">{$reviewer['img']}</div>
+            <div class="amfm-row-text-container">
+                <div class="amfm-row-text-name">{$reviewer['name']}</div>
+                <div class="amfm-row-text-credentials">{$reviewer['credentials']}</div>
+                <div class="amfm-row-text-title">{$reviewer['title']}</div>
+            </div>
+        </div>
+    </div>
+    HTML;
+
+    return (string) $output;
 });

@@ -11,13 +11,84 @@
 #amfm-byline-col-editor,
 #amfm-byline-col-reviewer {
    display: none;
+   cursor: pointer;
+}
+
+#amfm-byline-col-editor {
+   border-left: solid 1px  #ccc;
+}
+
+.amfm-bylines-container {
+   display: flex;
+   flex-wrap: wrap;
+   /* Allow columns to wrap when space is limited */
+   width: 100%;
+   /* border: 1px solid #ccc; */
+   background: #fff;
+}
+
+.amfm-bylines-container .amfm-column {
+   position: relative;
+   flex: 1 1 200px;
+   /* Allow columns to shrink, grow, and set a minimum width */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 20px;
+   /* Adds spacing between elements */
+   /* border-right: 1px solid #ccc; */
+   padding: 20px;
+   box-sizing: border-box;
+   /* Ensures padding doesn't affect width calculation */
+}
+
+.amfm-column:last-child {
+   border-right: none;
+}
+
+.amfm-image {
+   width: 40px;
+   /* height: 40px; */
+   border-radius: 50%;
+   border: 2px #02303C solid;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   overflow: hidden;
+}
+
+.amfm-row-text-container {
+   display: flex;
+   flex-direction: column;
+   gap: 0px;
+   /* Adds spacing between rows of text */
+}
+
+.amfm-text {
+   font-size: 12px;
+   font-weight: bold;
+   line-height: 1.1em;
+   max-width: 80px;
+}
+.amfm-row-text-name {
+   font-size: 15px;
+   line-height: 1em;
+   font-weight: bold;
+}
+.amfm-row-text-credentials {
+   font-size: 12px;
+   line-height: 1em;
+}
+.amfm-row-text-title {
+   color:#00997A; 
+   font-weight:bold;
 }
 
 .amfm-border-left {
    position: absolute;
    width: 1px;
    height: 75%;
-   background-color: #1E2945;
+   background-color: #ccc;
    left: 0;
    top: 14%;
 }
