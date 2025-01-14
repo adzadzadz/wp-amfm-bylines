@@ -35,29 +35,33 @@ add_shortcode('amfm_info', function ($atts) {
 
     $output = '';
 
-    $byline = $this->get_byline($type);
+    $use_staff_cpt = get_option('amfm_use_staff_cpt');
+
+    $byline = $this->get_byline($type, $use_staff_cpt);
+
     if (!$byline)
         return "No byline found";
 
-    $byline_data = json_decode($byline->data, true);
+    if (!$use_staff_cpt) {
+        $byline_data = json_decode($byline->data, true);
 
-    switch ($data) {
-        case 'name':
-            $output = $byline->byline_name;
-            break;
-        case 'credentials':
-            $output = $byline_data['honorificSuffix'];
-            break;
-        case 'job_title':
-            $output = $byline_data['jobTitle'];
-            break;
-        case 'page_url':
-            $output = preg_replace('/^https?:\/\//', '', $byline_data['page_url']);
-            break;
-        case 'img':
-            $profile_url = $byline->profile_image ? $byline->profile_image : plugin_dir_url(__FILE__) . 'placeholder.jpeg';
-            $name = $byline->byline_name;
-            $output = <<<HTML
+        switch ($data) {
+            case 'name':
+                $output = $byline->byline_name;
+                break;
+            case 'credentials':
+                $output = $byline_data['honorificSuffix'];
+                break;
+            case 'job_title':
+                $output = $byline_data['jobTitle'];
+                break;
+            case 'page_url':
+                $output = preg_replace('/^https?:\/\//', '', $byline_data['page_url']);
+                break;
+            case 'img':
+                $profile_url = $byline->profile_image ? $byline->profile_image : plugin_dir_url(__FILE__) . 'placeholder.jpeg';
+                $name = $byline->byline_name;
+                $output = <<<HTML
 						<div style="text-align: center; display: inline-block;">
 							<img 
 								style="width: 40px; border-radius: 50%; border: 2px #00245d solid;" 
@@ -65,7 +69,39 @@ add_shortcode('amfm_info', function ($atts) {
 								alt="$name" />
 						</div>
 					HTML;
-            break;
+                break;
+        }
+    } else {
+        $byline_data = get_fields($byline->ID);
+
+        $staff_profile_image = get_the_post_thumbnail_url($byline->ID);
+
+        switch ($data) {
+            case 'name':
+                $output = $byline->post_title;
+                break;
+            case 'credentials':
+                $output = $byline_data['honorific_suffix'];
+                break;
+            case 'job_title':
+                $output = $byline_data['job_title'];
+                break;
+            case 'page_url':
+                $output = preg_replace('/^https?:\/\//', '', get_permalink($byline->ID));
+                break;
+            case 'img':
+                $profile_url = $staff_profile_image ? $staff_profile_image : plugin_dir_url(__FILE__) . 'placeholder.jpeg';
+                $name = $byline->post_title;
+                $output = <<<HTML
+						<div style="text-align: center; display: inline-block;">
+							<img 
+								style="width: 40px; border-radius: 50%; border: 2px #00245d solid;" 
+								src="$profile_url" 
+								alt="$name" />
+						</div>
+					HTML;
+                break;
+        }
     }
 
     return "$output";

@@ -128,7 +128,7 @@ class Amfm_Bylines_Public
 	public function manage_bylines_schema_with_staff_cpt()
 	{
 		add_filter('rank_math/json_ld', function ($data, $jsonld) {
-			
+
 			if (is_singular('post') || is_page()) {
 
 				// get this post/page author, editor, and reviewedBy tags
@@ -136,7 +136,7 @@ class Amfm_Bylines_Public
 				$editor_byline = $this->get_byline('editor', true);
 				$reviewer_byline = $this->get_byline('reviewedBy', true);
 
-				
+
 				// In this context get_byline returns the post object. I need to get the custom field values from the post object
 				// Build the author array and should contain bylines with author tags
 				$author_schema = array();
@@ -436,13 +436,20 @@ class Amfm_Bylines_Public
 	 */
 	private function get_byline_url($type)
 	{
-		$byline = $this->get_byline($type);
+		$use_staff_cpt = get_option('amfm_use_staff_cpt');
+
+		$byline = $this->get_byline($type, $use_staff_cpt);
 		if (!$byline)
 			return "No byline found";
 
-		$byline_data = json_decode($byline->data, true);
-
-		return preg_replace('/^https?:\/\//', '', $byline_data['page_url']);
+		if ($use_staff_cpt) {
+			$url = get_permalink($byline->ID);
+		} else {
+			$byline_data = json_decode($byline->data, true);
+			$url = $byline_data['page_url'];
+		}
+		return preg_replace('/^https?:\/\//', '', $url);
+		
 	}
 
 	/**
