@@ -32,6 +32,7 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
     // Define widget controls
     protected function _register_controls()
     {
+        // Content section (already present)
         $this->start_controls_section(
             'content_section',
             [
@@ -45,7 +46,7 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
             [
                 'label' => __('Related Posts Filter', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SELECT,
-                'default' => 'all', // Default value
+                'default' => 'all',
                 'options' => [
                     'all' => __('All', 'amfm-bylines'),
                     'author' => __('Author', 'amfm-bylines'),
@@ -65,10 +66,131 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
         );
 
         $this->end_controls_section();
+
+        // Start Style Section
+        $this->start_controls_section(
+            'title_section',
+            [
+                'label' => __('Title', 'amfm-bylines'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        // Text Styles Panel
+        $this->add_control(
+            'text_styles_panel',
+            [
+                'label' => __('Text Styles', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+            ]
+        );
+
+        $this->add_control(
+            'title_color',
+            [
+                'label' => __('Title Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#333333',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-related-post-title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'title_typography',
+                'label' => __('Title Typography', 'amfm-bylines'),
+                'selector' => '{{WRAPPER}} .amfm-related-post-title',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->start_controls_section(
+            'link_section',
+            [
+                'label' => __('Link', 'amfm-bylines'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        // Link Styles Panel
+        $this->add_control(
+            'link_styles_panel',
+            [
+                'label' => __('Link Styles', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+            ]
+        );
+
+        $this->add_control(
+            'link_color',
+            [
+                'label' => __('Link Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#333333',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-related-post-link' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'link_typography',
+                'label' => __('Link Typography', 'amfm-bylines'),
+                'selector' => '{{WRAPPER}} .amfm-related-post-link',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->start_controls_section(
+            'pagination_section',
+            [
+                'label' => __('Pagination', 'amfm-bylines'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        // Pagination Styles Panel
+        $this->add_control(
+            'pagination_styles_panel',
+            [
+                'label' => __('Pagination Styles', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+            ]
+        );
+
+        $this->add_control(
+            'pagination_color',
+            [
+                'label' => __('Pagination Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#333333',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-pagination a' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'pagination_typography',
+                'label' => __('Pagination Typography', 'amfm-bylines'),
+                'selector' => '{{WRAPPER}} .amfm-pagination',
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     // Fetch related posts logic
-    private function fetch_related_posts($posts_per_page = 5, $filter = 'all')
+    private function fetch_related_posts($posts_per_page = 5, $filter = 'all', $settings)
     {
         global $post;
 
@@ -167,7 +289,7 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
         $related_posts_filter = $settings['related_posts_filter'];
 
         echo '<div class="amfm-related-posts-widget" data-filter="' . esc_attr($related_posts_filter) . '" data-posts-count="' . intval($posts_per_page) . '">';
-        echo $this->fetch_related_posts($posts_per_page, $related_posts_filter);
+        echo $this->fetch_related_posts($posts_per_page, $related_posts_filter, $settings);
         echo '</div>';
     }
 }

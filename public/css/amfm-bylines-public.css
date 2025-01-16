@@ -110,12 +110,11 @@
 .amfm-pagination a:hover {
    background: #f0f0f0;
 }
+ */
 
-.amfm-pagination .current {
-   background: #0073aa;
-   color: #fff;
-   border-color: #0073aa;
-} */
+ .amfm-pagination .current {
+   color: #111;
+}
 
 .amfm-related-posts .amfm-related-post-item {
    margin-bottom: 15px;
