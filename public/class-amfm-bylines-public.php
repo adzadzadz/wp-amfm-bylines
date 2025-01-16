@@ -121,7 +121,7 @@ class Amfm_Bylines_Public
 			$this->plugin_name . "-elementor-widgets",
 			plugin_dir_url(__FILE__) . 'js/amfm-elementor-widgets.js', // Adjust the path to your JS file
 			['jquery'],
-			random_int(0000, 9999),
+			$this->version,
 			true
 		);
 
