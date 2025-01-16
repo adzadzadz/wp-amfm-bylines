@@ -48,6 +48,7 @@
 
 .amfm-image {
    width: 40px;
+   max-height: 40px;
    /* height: 40px; */
    border-radius: 50%;
    border: 2px #02303C solid;
