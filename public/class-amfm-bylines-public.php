@@ -100,7 +100,14 @@ class Amfm_Bylines_Public
 		 */
 
 		// wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), $this->version, false);
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), $this->version, false);
+		wp_enqueue_script(
+			$this->plugin_name,
+			plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js',
+			array('jquery'),
+			$this->version,
+			false
+		);
+
 		wp_localize_script($this->plugin_name, 'amfmLocalize', array(
 			'author' => $this->is_tagged('authored-by'),
 			'editor' => $this->is_tagged('edited-by'),
@@ -109,6 +116,21 @@ class Amfm_Bylines_Public
 			'editor_page_url' => $this->get_byline_url('editor'),
 			'reviewer_page_url' => $this->get_byline_url('reviewedBy')
 		));
+
+		wp_enqueue_script(
+			$this->plugin_name . "-elementor-widgets",
+			plugin_dir_url(__FILE__) . 'js/amfm-elementor-widgets.js', // Adjust the path to your JS file
+			['jquery'],
+			random_int(0000, 9999),
+			true
+		);
+
+		// Pass data to JavaScript
+		wp_localize_script($this->plugin_name . "-elementor-widgets", 'amfm_ajax_object', [
+			'ajax_url' => admin_url('admin-ajax.php'),
+			'nonce'    => wp_create_nonce('amfm_nonce'),
+			'post_id'  => get_the_ID()
+		]);
 	}
 
 	public function init()
@@ -454,7 +476,6 @@ class Amfm_Bylines_Public
 			$url = $byline_data['page_url'];
 		}
 		return preg_replace('/^https?:\/\//', '', $url);
-		
 	}
 
 	/**
@@ -497,8 +518,108 @@ class Amfm_Bylines_Public
 	{
 		// Elementor Widgets
 		// if (did_action( 'elementor/loaded' )) {
-			require_once 'class-elementor-posts-widget.php';
-
+		require_once 'class-elementor-posts-widget.php';
 		// }
+	}
+
+	public function amfm_fetch_related_posts()
+	{
+		check_ajax_referer('amfm_nonce', 'security');
+
+		$filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : 'all';
+		$posts_per_page = isset($_POST['posts_per_page']) ? intval($_POST['posts_per_page']) : 5;
+		$paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
+		$current_post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+
+		if (!$current_post_id) {
+			wp_send_json(['content' => '<p>No related posts found.</p>']);
+		}
+
+		// Fetch the current post object
+		$post = get_post($current_post_id);
+
+		if (!$post) {
+			wp_send_json(['content' => '<p>No related posts found.</p>']);
+		}
+
+		// Get tags of the current post
+		$tags = wp_get_post_tags($post->ID);
+
+		if (!$tags) {
+			wp_send_json(['content' => '<p>No related posts found.</p>']);
+		}
+
+		// Filter tags based on the selected filter
+		$tag_prefix = '';
+		switch ($filter) {
+			case 'author':
+				$tag_prefix = 'authored-by-';
+				break;
+			case 'editor':
+				$tag_prefix = 'edited-by-';
+				break;
+			case 'reviewer':
+				$tag_prefix = 'reviewed-by-';
+				break;
+		}
+
+		if ($tag_prefix) {
+			$tags = array_filter($tags, function ($tag) use ($tag_prefix) {
+				return strpos($tag->slug, $tag_prefix) === 0;
+			});
+		}
+
+		if (empty($tags)) {
+			wp_send_json(['content' => '<p>No related posts found.</p>']);
+		}
+
+		$tag_ids = array_map(function ($tag) {
+			return $tag->term_id;
+		}, $tags);
+
+		// Query posts
+		$args = [
+			'post_type'      => 'post',
+			'posts_per_page' => $posts_per_page,
+			'post__not_in'   => [$post->ID],
+			'tag__in'        => $tag_ids,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+			'paged'          => $paged,
+		];
+
+		$query = new WP_Query($args);
+
+		if ($query->have_posts()) {
+			ob_start();
+			echo '<div class="amfm-related-posts">';
+			while ($query->have_posts()) {
+				$query->the_post();
+				echo '<div class="amfm-related-post-item">';
+				echo '<div class="amfm-related-post-title">' . get_the_title() . '</div>';
+				echo '<a class="amfm-related-post-link amfm-read-more" href="' . get_permalink() . '">Read More</a>';
+				echo '</div>';
+			}
+			echo '</div>';
+
+			// Pagination links
+			$big = 999999999;
+			$pagination = paginate_links([
+				'base'      => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+				'format'    => '?paged=%#%',
+				'current'   => max(1, $paged),
+				'total'     => $query->max_num_pages,
+				'prev_text' => '&laquo; Previous',
+				'next_text' => 'Next &raquo;',
+			]);
+
+			wp_send_json([
+				'content'    => ob_get_clean(),
+				'pagination' => $pagination,
+			]);
+		} else {
+			wp_send_json(['content' => '<p>No related posts found.</p>']);
+		}
+		wp_reset_postdata();
 	}
 }

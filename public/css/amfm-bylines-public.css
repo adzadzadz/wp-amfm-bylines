@@ -93,7 +93,7 @@
    top: 14%;
 }
 
-.amfm-pagination {
+/* .amfm-pagination {
    margin-top: 20px;
    text-align: center;
 }
@@ -115,10 +115,20 @@
    background: #0073aa;
    color: #fff;
    border-color: #0073aa;
-}
+} */
 
 .amfm-related-posts .amfm-related-post-item {
    margin-bottom: 15px;
+}
+
+.amfm-related-post-title {
+   font-size: 18px; 
+   font-weight: bold;
+}
+
+.amfm-related-post-link {
+   font-size: 14px; 
+   font-weight: bold;
 }
 
 .amfm-related-posts .amfm-read-more {
@@ -126,6 +136,7 @@
    text-decoration: underline;
    font-weight: bold;
 }
+
 
 @media (max-width: 1024px) {
 

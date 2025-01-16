@@ -130,18 +130,18 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
             $output = '<div class="amfm-related-posts">';
             while ($query->have_posts()) {
                 $query->the_post();
-                $output .= '<div class="amfm-related-post-item" style="margin-bottom: 10px;">';
-                $output .= '<div class="amfm-related-post-title" style="font-size: 18px; font-weight: bold;">' . get_the_title() . '</div>';
-                $output .= '<a class="amfm-related-post-link amfm-read-more" style="font-size: 14px; font-weight: bold;" href="' . get_permalink() . '">Read More</a>';
+                $output .= '<div class="amfm-related-post-item">';
+                $output .= '<div class="amfm-related-post-title">' . get_the_title() . '</div>';
+                $output .= '<a class="amfm-related-post-link amfm-read-more" href="' . get_permalink() . '">Read More</a>';
                 $output .= '</div>';
             }
             $output .= '</div>';
 
             // Pagination links
             $output .= '<div class="amfm-pagination">';
-            $big = 999999999; // A large number for replacing the pagination
+            // $big = 999999999; // A large number for replacing the pagination
             $output .= paginate_links(array(
-                'base'      => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+                'base'      => esc_url(add_query_arg('paged', '%#%')),
                 'format'    => '?paged=%#%',
                 'current'   => max(1, $paged),
                 'total'     => $query->max_num_pages,
@@ -166,8 +166,9 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
         $posts_per_page    = $settings['posts_count'];
         $related_posts_filter = $settings['related_posts_filter'];
 
-        // Call the fetch-related-posts function and output the result
+        echo '<div class="amfm-related-posts-widget" data-filter="' . esc_attr($related_posts_filter) . '" data-posts-count="' . intval($posts_per_page) . '">';
         echo $this->fetch_related_posts($posts_per_page, $related_posts_filter);
+        echo '</div>';
     }
 }
 

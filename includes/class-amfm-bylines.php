@@ -185,6 +185,9 @@ class Amfm_Bylines {
 		$this->loader->add_action('init', $plugin_public, 'init');
 		// $this->loader->add_action('init', $plugin_public, 'init');
 
+		$this->loader->add_action('wp_ajax_amfm_fetch_posts', $plugin_public, 'amfm_fetch_related_posts');
+		$this->loader->add_action('wp_ajax_nopriv_amfm_fetch_posts', $plugin_public, 'amfm_fetch_related_posts');
+
 	}
 
 	/**
