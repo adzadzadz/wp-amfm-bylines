@@ -93,6 +93,40 @@
    top: 14%;
 }
 
+.amfm-pagination {
+   margin-top: 20px;
+   text-align: center;
+}
+
+.amfm-pagination a, .amfm-pagination span {
+   display: inline-block;
+   margin: 0 5px;
+   padding: 8px 12px;
+   border: 1px solid #ddd;
+   color: #333;
+   text-decoration: none;
+}
+
+.amfm-pagination a:hover {
+   background: #f0f0f0;
+}
+
+.amfm-pagination .current {
+   background: #0073aa;
+   color: #fff;
+   border-color: #0073aa;
+}
+
+.amfm-related-posts .amfm-related-post-item {
+   margin-bottom: 15px;
+}
+
+.amfm-related-posts .amfm-read-more {
+   color: #0073aa;
+   text-decoration: underline;
+   font-weight: bold;
+}
+
 @media (max-width: 1024px) {
 
    /* commons */

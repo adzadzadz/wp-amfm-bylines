@@ -122,6 +122,8 @@ class Amfm_Bylines_Public
 			$this->manage_bylines_schema();
 		}
 		$this->run_shortcodes();
+
+		$this->run_elementor();
 	}
 
 	/**
@@ -489,5 +491,14 @@ class Amfm_Bylines_Public
 		if (class_exists('ACF')) {
 			include plugin_dir_path(__FILE__) . 'partials/shortcodes/acf.php';
 		}
+	}
+
+	public function run_elementor()
+	{
+		// Elementor Widgets
+		// if (did_action( 'elementor/loaded' )) {
+			require_once 'class-elementor-posts-widget.php';
+
+		// }
 	}
 }
