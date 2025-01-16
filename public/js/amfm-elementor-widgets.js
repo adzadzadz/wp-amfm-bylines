@@ -6,9 +6,10 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
 
         let page = $(this).attr('href').split('paged=')[1];
-        let filter = $('.amfm-related-posts-widget').data('filter');
+        let filter = $(this).closest('.amfm-related-posts-widget').data('filter');
         let postsPerPage = $('.amfm-related-posts-widget').data('posts-count');
         
+        console.log("filter", filter);
         $.ajax({
             url: amfm_ajax_object.ajax_url,
             type: 'POST',

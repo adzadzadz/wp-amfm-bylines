@@ -244,6 +244,8 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
             'paged'          => $paged, // Handle pagination
         ];
 
+        // return json_encode($args);
+
         // Execute the query
         $query = new WP_Query($args);
 
