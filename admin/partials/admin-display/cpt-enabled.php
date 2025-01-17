@@ -5,14 +5,44 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-// get all data from the Staff CPT
-$bylines = get_posts(array(
-    'post_type' => 'staff',
-    'numberposts' => -1,
-    'order' => 'ASC',
-    'meta_key' => 'amfm_sort', // Order by the sort field
-    'orderby' => 'meta_value_num', // Important for numerical sorting
-));
+// First query: Fetch staff posts with amfm_sort > 0
+$query1 = new WP_Query([
+    'post_type'      => 'staff',
+    'posts_per_page' => -1,
+    'orderby'        => 'meta_value_num',
+    'meta_key'       => 'amfm_sort', // The ACF field to sort by
+    'order'          => 'ASC', // Descending order to get higher amfm_sort values first
+    'meta_query'     => [
+        [
+            'key'     => 'amfm_sort',
+            'value'   => '0',
+            'compare' => '>',
+        ]
+    ],
+]);
+
+// Second query: Fetch staff posts where amfm_sort is 0 or null
+$query2 = new WP_Query([
+    'post_type'      => 'staff',
+    'posts_per_page' => -1,
+    'orderby'        => 'ID',
+    'order'          => 'ASC', // Ascending order so these appear last
+    'meta_query'     => [
+        'relation' => 'OR',
+        [
+            'key'     => 'amfm_sort',
+            'value'   => '0',
+            'compare' => '=',
+        ],
+        [
+            'key'     => 'amfm_sort',
+            'compare' => 'NOT EXISTS', // To get posts where amfm_sort is null
+        ]
+    ],
+]);
+
+// Merge the results from both queries
+$merged_posts = array_merge($query1->posts, $query2->posts);
 
 ?>
 
@@ -29,7 +59,10 @@ $bylines = get_posts(array(
                     </div>
                 </div>
 
-                <?php foreach ($bylines as $byline) : ?>
+                <?php foreach ($merged_posts as $post_id) : ?>
+                    <?php 
+                        $byline = get_post($post_id); // Get the full post object from the post ID
+                    ?>
                     <div class="col-6 col-md-4 col-lg-2 mb-4 staff-item" data-id="<?php echo $byline->ID; ?>">
                         <div class="card amfm-card amfm-card-item amfm-card-staff-item" data-url="<?php echo get_edit_post_link($byline->ID); ?>">
                             <?php if (has_post_thumbnail($byline->ID)) : ?>
@@ -65,7 +98,7 @@ $bylines = get_posts(array(
                         nonce: '<?php echo wp_create_nonce("update_staff_order_nonce"); ?>' // Nonce for security
                     },
                     success: function(response) {
-                        if (response === 'success') {
+                        if (response.data === 'success') {
                             console.log('Order updated successfully');
                         } else {
                             console.error('Error updating order:', response);

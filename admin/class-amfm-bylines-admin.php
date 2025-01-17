@@ -392,17 +392,25 @@ class Amfm_Bylines_Admin
 	}
 
 
-	public function update_staff_order_callback()
-	{
+	public function update_staff_order_callback() {
 		check_ajax_referer('update_staff_order_nonce', 'nonce'); // Verify nonce
-
+	
 		if (isset($_POST['ids']) && is_array($_POST['ids'])) {
 			$ids = $_POST['ids'];
-			$i = 0;
-			foreach ($ids as $id) {
-				update_field('amfm_sort', $i, $id); // Update the ACF field
-				$i++;
+			
+			// Start with 1 for the first item
+			$i = 1; 
+			
+			foreach ($ids as $index => $id) {
+				// If this is the first item in the sorted list, set its amfm_sort to 1
+				if ($index === 0) {
+					update_field('amfm_sort', 1, $id); // First item gets 1
+				} else {
+					update_field('amfm_sort', $i, $id); // Other items get incremented
+				}
+				$i++; // Increment for the next item
 			}
+	
 			wp_send_json_success('success');
 		} else {
 			wp_send_json_error('Invalid data');
