@@ -559,13 +559,6 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
                     echo '<div class="amfm-staff-meta">' . esc_html($title) . ', ' . esc_html($region) . '</div>';
                 }
 
-                // Display ACF fields for 'amfm_hide' and 'amfm_sort'
-                $amfm_hide = get_field('amfm_hide', $post_id);
-                $amfm_sort = get_field('amfm_sort', $post_id);
-
-                echo "<div>Is Hidden? " . ($amfm_hide ? 'Yes' : 'No') . "</div>";
-                echo "<div>Sort: " . ($amfm_sort !== null ? esc_html($amfm_sort) : 'Not Set') . "</div>";
-
                 echo '</a>';
                 echo '</div>';
             }
