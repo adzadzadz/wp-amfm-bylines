@@ -20,7 +20,8 @@
  * @subpackage Amfm_Bylines/includes
  * @author     Adrian T. Saycon <adzbite@gmail.com>
  */
-class Amfm_Bylines_Activator {
+class Amfm_Bylines_Activator
+{
 
 	/**
 	 * Short Description. (use period)
@@ -29,7 +30,8 @@ class Amfm_Bylines_Activator {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate() {
+	public static function activate()
+	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'amfm_bylines';
 		$charset_collate = $wpdb->get_charset_collate();
@@ -38,9 +40,9 @@ class Amfm_Bylines_Activator {
 		if (!get_option('amfm_bylines_tags')) {
 			add_option('amfm_bylines_tags', []);
 		}
-	
+
 		// Check if the table already exists
-		if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
 			$sql = "CREATE TABLE $table_name (
 				id mediumint(9) NOT NULL AUTO_INCREMENT,
 				byline_name varchar(100) NOT NULL,
@@ -53,10 +55,10 @@ class Amfm_Bylines_Activator {
 				reviewedByTag VARCHAR(255),
 				PRIMARY KEY  (id)
 			) $charset_collate;";
-	
+
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta($sql);
-	
+
 			// Check for errors
 			if ($wpdb->last_error) {
 				// Log the error or handle it as needed
@@ -64,13 +66,13 @@ class Amfm_Bylines_Activator {
 				wp_die('There was an error creating the table. Please contact the administrator.');
 			}
 		}
-	
+
 		// Check and add new columns if they do not exist
 		$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'profile_image'");
 		if (empty($columns)) {
 			$wpdb->query("ALTER TABLE $table_name ADD profile_image TEXT");
 		}
-	
+
 		$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'description'");
 		if (empty($columns)) {
 			$wpdb->query("ALTER TABLE $table_name ADD description TEXT");
@@ -95,7 +97,7 @@ class Amfm_Bylines_Activator {
 		if (empty($columns)) {
 			$wpdb->query("ALTER TABLE $table_name ADD reviewedByTag VARCHAR(255)");
 		}
-	
+
 		// Check for errors after altering the table
 		if ($wpdb->last_error) {
 			// Log the error or handle it as needed
@@ -103,5 +105,5 @@ class Amfm_Bylines_Activator {
 			wp_die('There was an error updating the table. Please contact the administrator.');
 		}
 	}
-
+	
 }

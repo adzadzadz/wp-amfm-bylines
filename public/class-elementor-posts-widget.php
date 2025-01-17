@@ -20,7 +20,7 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
     // Define widget icon
     public function get_icon()
     {
-        return 'eicon-posts-grid';
+        return 'eicon-post-list';
     }
 
     // Define widget categories
@@ -297,8 +297,4 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
 }
 
 // Register the widget
-function register_elementor_amfm_posts_widget($widgets_manager)
-{
-    $widgets_manager->register(new \Elementor_AMFM_Posts_Widget());
-}
-add_action('elementor/widgets/register', 'register_elementor_amfm_posts_widget');
+\Elementor\Plugin::instance()->widgets_manager->register_widget_type(new \Elementor_AMFM_Posts_Widget());

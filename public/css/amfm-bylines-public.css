@@ -137,6 +137,17 @@
    font-weight: bold;
 }
 
+/* AMFM STAFF ELEMENTOR MODULE */
+.amfm-staff-grid {
+   text-align: center;
+}
+.amfm-staff-item {
+   margin-left: auto;
+   margin-right: auto;
+}
+.amfm-staff-image {
+   text-align: center;
+}
 
 @media (max-width: 1024px) {
 
