@@ -164,6 +164,7 @@ class Amfm_Bylines {
 		$this->loader->add_action('wp_ajax_remove_amfm_byline', $plugin_admin, 'remove_amfm_byline');
 		$this->loader->add_action('wp_ajax_toggle_function', $plugin_admin, 'toggle_function');
 		$this->loader->add_action('init', $plugin_admin, 'add_categories_and_tags_to_pages');
+		$this->loader->add_action('wp_ajax_update_staff_order', $plugin_admin, 'update_staff_order_callback');
 
 	}
 

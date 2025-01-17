@@ -390,4 +390,23 @@ class Amfm_Bylines_Admin
 		register_taxonomy_for_object_type('category', 'page');
 		register_taxonomy_for_object_type('post_tag', 'page');
 	}
+
+
+	public function update_staff_order_callback()
+	{
+		check_ajax_referer('update_staff_order_nonce', 'nonce'); // Verify nonce
+
+		if (isset($_POST['ids']) && is_array($_POST['ids'])) {
+			$ids = $_POST['ids'];
+			$i = 0;
+			foreach ($ids as $id) {
+				update_field('amfm_sort', $i, $id); // Update the ACF field
+				$i++;
+			}
+			wp_send_json_success('success');
+		} else {
+			wp_send_json_error('Invalid data');
+		}
+		wp_die(); // Important to prevent extra output
+	}
 }
