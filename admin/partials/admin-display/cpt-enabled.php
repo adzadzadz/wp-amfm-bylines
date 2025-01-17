@@ -50,15 +50,6 @@ $merged_posts = array_merge($query1->posts, $query2->posts);
     <div class="row">
         <div class="col-12 mt-4">
             <div class="row staff-grid sortable"> 
-                <div class="col-6 col-md-4 col-lg-2 mb-4 add-staff-item">
-                    <div class="card amfm-card" id="amfm-create-staff">
-                        <img src="<?= $placeholder ?>" class="card-img-top" alt="Add Staff">
-                        <div class="card-body">
-                            <h5 class="card-title">Add a Person</h5>
-                        </div>
-                    </div>
-                </div>
-
                 <?php foreach ($merged_posts as $post_id) : ?>
                     <?php 
                         $byline = get_post($post_id); // Get the full post object from the post ID
