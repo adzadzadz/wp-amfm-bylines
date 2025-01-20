@@ -151,12 +151,27 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_control(
+            'hide_if_no_image',
+            [
+                'label' => __('Hide if No Featured Image', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'amfm-bylines'),
+                'label_off' => __('No', 'amfm-bylines'),
+                'return_value' => 'yes',
+                'default' => 'no',
+            ]
+        );
+        
+        $this->add_control(
             'fallback_image',
             [
                 'label'   => __('Fallback Image', 'amfm-bylines'),
                 'type'    => \Elementor\Controls_Manager::MEDIA,
                 'default' => [
                     'url' => \Elementor\Utils::get_placeholder_image_src(),
+                ],
+                'condition' => [
+                    'hide_if_no_image!' => 'yes',
                 ],
             ]
         );
@@ -532,11 +547,16 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
 
                 $amfm_hide = get_field('amfm_hide', $post_id);
                 
+                // Skip if amfm_hide is true
                 if ($amfm_hide && $amfm_hide === true) {
                     continue; // Skip if amfm_hide is true
                 }
-                
 
+                // Skip if hide_if_no_image is enabled and there is no featured image
+                if ( 'yes' === $settings['hide_if_no_image'] && !has_post_thumbnail($post_id) ) {
+                    continue;
+                }
+                
                 echo '<div class="amfm-staff-item">';
                 echo '<a href="' . esc_url($link) . '">';
 
