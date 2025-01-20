@@ -76,7 +76,7 @@ class Amfm_Bylines_Public
 		 */
 
 		// wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
-		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name . "-public", plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
 	}
 
 	/**
