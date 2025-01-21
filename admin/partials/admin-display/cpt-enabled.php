@@ -63,7 +63,7 @@ $merged_posts = array_merge($query1->posts, $query2->posts);
                             <?php endif; ?>
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo esc_html(stripslashes($byline->post_title)); ?></h5>
-                                <p class="card-text"><?php echo esc_html(stripslashes(wp_trim_words(get_the_excerpt($byline), 10, '...'))); ?></p>
+                                <p class="card-text"><?php echo esc_html(stripslashes(get_post_meta($byline->ID, 'title', true))); ?></p>
                             </div>
                         </div>
                     </div>
