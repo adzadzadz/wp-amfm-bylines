@@ -161,7 +161,7 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
                 'default' => 'no',
             ]
         );
-        
+
         $this->add_control(
             'fallback_image',
             [
@@ -505,8 +505,17 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
             ],
         ]);
 
-        // Merge the results from both queries
+        // Merge the results from both queries and remove duplicates
         $merged_posts = array_merge($query1->posts, $query2->posts);
+        $unique_posts = [];
+        $post_ids = [];
+
+        foreach ($merged_posts as $post) {
+            if (!in_array($post->ID, $post_ids)) {
+                $unique_posts[] = $post;
+                $post_ids[] = $post->ID;
+            }
+        }
 
         // Generate CSS for responsive breakpoints
         $custom_css = "
@@ -540,23 +549,23 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
         // Start rendering the grid
         echo '<div class="amfm-staff-grid">';
 
-        if (!empty($merged_posts)) {
-            foreach ($merged_posts as $post_id) {
-                $post = get_post($post_id);
+        if (!empty($unique_posts)) {
+            foreach ($unique_posts as $post) {
+                $post_id = $post->ID;
                 $link = get_permalink($post); // Correct the permalink
 
                 $amfm_hide = get_field('amfm_hide', $post_id);
-                
+
                 // Skip if amfm_hide is true
                 if ($amfm_hide && $amfm_hide === true) {
                     continue; // Skip if amfm_hide is true
                 }
 
                 // Skip if hide_if_no_image is enabled and there is no featured image
-                if ( 'yes' === $settings['hide_if_no_image'] && !has_post_thumbnail($post_id) ) {
+                if ('yes' === $settings['hide_if_no_image'] && !has_post_thumbnail($post_id)) {
                     continue;
                 }
-                
+
                 echo '<div class="amfm-staff-item">';
                 echo '<a href="' . esc_url($link) . '">';
 
