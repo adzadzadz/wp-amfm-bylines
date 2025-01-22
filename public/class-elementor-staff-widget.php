@@ -29,6 +29,28 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
         return ['general'];
     }
 
+    // Get Staff Options
+    private function get_staff_options()
+    {
+        $staff_options = [];
+        $staff_query = new WP_Query([
+            'post_type' => 'staff',
+            'posts_per_page' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC',
+        ]);
+
+        if ($staff_query->have_posts()) {
+            while ($staff_query->have_posts()) {
+                $staff_query->the_post();
+                $staff_options[get_the_ID()] = get_the_title();
+            }
+            wp_reset_postdata();
+        }
+
+        return $staff_options;
+    }
+
     // Register Controls
     protected function _register_controls()
     {
@@ -227,6 +249,46 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
                 'selectors' => [
                     '{{WRAPPER}} .amfm-staff-image img' => 'max-width: {{SIZE}}{{UNIT}};',
                 ],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->start_controls_section(
+            'query',
+            [
+                'label' => __('Query', 'amfm-bylines'),
+                'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        // Query by staff select field
+        $this->add_control(
+            'query_by_staff',
+            [
+                'label' => __('Query by Staff', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'all' => __('All Staff', 'amfm-bylines'),
+                    'selected' => __('Selected Staff', 'amfm-bylines'),
+                ],
+                'default' => 'all',
+            ]
+        );
+
+        // Staff select field
+        $this->add_control(
+            'query_staff',
+            [
+                'label' => __('Staff', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT2,
+                'options' => $this->get_staff_options(),
+                'multiple' => true,
+                'label_block' => true,
+                'condition' => [
+                    'query_by_staff' => 'selected',
+                ],
+                'sortable' => true, // Enable sorting
             ]
         );
 
@@ -464,56 +526,69 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
         $grid_gap = isset($settings['grid_gap']['size']) ? $settings['grid_gap']['size'] : 20;
         $image_size = $settings['image_size'];
         $fallback_image = isset($settings['fallback_image']['url']) ? $settings['fallback_image']['url'] : '';
+        $query_by_staff = $settings['query_by_staff'];
+        $query_staff = $settings['query_staff'];
 
-        // First query: Fetch staff posts with amfm_sort > 0
-        $query1 = new WP_Query([
+        // Determine the query arguments based on the selected staff option
+        $query_args = [
             'post_type'      => 'staff',
             'posts_per_page' => $posts_per_page,
-            'orderby'        => 'meta_value_num',
-            'meta_key'       => 'amfm_sort', // The ACF field to sort by
-            'order'          => 'ASC', // Descending order to get higher amfm_sort values first
-            'meta_query'     => [
-                [
-                    'key'     => 'amfm_sort',
-                    'value'   => '0',
-                    'compare' => '>',
-                ]
-            ],
-        ]);
+        ];
 
-        // Second query: Fetch staff posts where amfm_sort is 0 or null
-        $query2 = new WP_Query([
-            'post_type'      => 'staff',
-            'posts_per_page' => $posts_per_page,
-            'orderby'        => 'ID',
-            'order'          => 'ASC', // Ascending order so these appear last
-            'meta_query'     => [
-                'relation' => 'OR',
-                [
-                    'key'     => 'amfm_sort',
-                    'value'   => '0',
-                    'compare' => '=',
+        if ($query_by_staff === 'selected' && !empty($query_staff)) {
+            $query_args['post__in'] = $query_staff;
+            $query_args['orderby'] = 'post__in'; // Maintain the order of selected staff
+
+            $query_selected_staff = new WP_Query(array_merge($query_args, []));
+
+            $unique_posts = $query_selected_staff->posts;
+        } else {
+            // First query: Fetch staff posts with amfm_sort > 0
+            $query1 = new WP_Query(array_merge($query_args, [
+                'orderby'        => 'meta_value_num',
+                'meta_key'       => 'amfm_sort', // The ACF field to sort by
+                'order'          => 'ASC', // Descending order to get higher amfm_sort values first
+                'meta_query'     => [
+                    [
+                        'key'     => 'amfm_sort',
+                        'value'   => '0',
+                        'compare' => '>',
+                    ]
                 ],
-                [
-                    'key'     => 'amfm_sort',
-                    'compare' => 'NOT EXISTS', // To get posts where amfm_sort is null
+            ]));
+
+            // Second query: Fetch staff posts where amfm_sort is 0 or null
+            $query2 = new WP_Query(array_merge($query_args, [
+                'orderby'        => 'ID',
+                'order'          => 'ASC', // Ascending order so these appear last
+                'meta_query'     => [
+                    'relation' => 'OR',
+                    [
+                        'key'     => 'amfm_sort',
+                        'value'   => '0',
+                        'compare' => '=',
+                    ],
+                    [
+                        'key'     => 'amfm_sort',
+                        'compare' => 'NOT EXISTS', // To get posts where amfm_sort is null
+                    ],
+                    [
+                        'key'     => 'amfm_hide',
+                        'compare' => 'NOT EXISTS',
+                    ]
                 ],
-                [
-                    'key'     => 'amfm_hide',
-                    'compare' => 'NOT EXISTS',
-                ]
-            ],
-        ]);
+            ]));
 
-        // Merge the results from both queries and remove duplicates
-        $merged_posts = array_merge($query1->posts, $query2->posts);
-        $unique_posts = [];
-        $post_ids = [];
+            // Merge the results from both queries and remove duplicates
+            $merged_posts = array_merge($query1->posts, $query2->posts);
+            $unique_posts = [];
+            $post_ids = [];
 
-        foreach ($merged_posts as $post) {
-            if (!in_array($post->ID, $post_ids)) {
-                $unique_posts[] = $post;
-                $post_ids[] = $post->ID;
+            foreach ($merged_posts as $post) {
+                if (!in_array($post->ID, $post_ids)) {
+                    $unique_posts[] = $post;
+                    $post_ids[] = $post->ID;
+                }
             }
         }
 

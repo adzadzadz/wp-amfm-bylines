@@ -61,7 +61,7 @@ $merged_posts = array_merge($query1->posts, $query2->posts);
                             <?php else : ?>
                                 <img src="<?= $placeholder ?>" class="card-img-top" alt="<?php echo esc_attr(stripslashes($byline->post_title)); ?>">
                             <?php endif; ?>
-                            <div class="card-body">
+                            <div class="card-body ">
                                 <h5 class="card-title"><?php echo esc_html(stripslashes($byline->post_title)); ?></h5>
                                 <p class="card-text"><?php echo esc_html(stripslashes(get_post_meta($byline->ID, 'title', true))); ?></p>
                             </div>
