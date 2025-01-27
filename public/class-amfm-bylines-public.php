@@ -520,6 +520,7 @@ class Amfm_Bylines_Public
 		// if (did_action( 'elementor/loaded' )) {
 			require_once 'class-elementor-posts-widget.php';
 			require_once 'class-elementor-staff-widget.php';
+			require_once 'class-elementor-bylines-widget.php';
 		// }
 	}
 

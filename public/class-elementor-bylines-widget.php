@@ -2,18 +2,18 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-class Elementor_AMFM_Bylines_Grid_Widget extends \Elementor\Widget_Base
+class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
 {
     // Widget name
     public function get_name()
     {
-        return 'amfm_bylines_grid';
+        return 'amfm_bylines';
     }
 
     // Widget title
     public function get_title()
     {
-        return __('AMFM Bylines Grid', 'amfm-bylines');
+        return __('AMFM Bylines', 'amfm-bylines');
     }
 
     // Widget icon
@@ -148,9 +148,5 @@ class Elementor_AMFM_Bylines_Grid_Widget extends \Elementor\Widget_Base
     }
 }
 
-// Register the widget
-function register_elementor_amfm_bylines_grid_widget($widgets_manager)
-{
-    $widgets_manager->register(new \Elementor_AMFM_Bylines_Grid_Widget());
-}
-add_action('elementor/widgets/register', 'register_elementor_amfm_bylines_grid_widget');
+// Register Widget
+\Elementor\Plugin::instance()->widgets_manager->register_widget_type(new \Elementor_AMFM_Bylines_Widget());
