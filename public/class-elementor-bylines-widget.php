@@ -124,6 +124,43 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        // Add control to adjust image size height and width
+        $this->add_control(
+            'image_size',
+            [
+                'label' => __('Image Size', 'plugin-name'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-image img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'image_border_radius',
+            [
+                'label' => __('Image Border Radius', 'plugin-name'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 100,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-image img' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // Start Style Section
@@ -257,7 +294,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     border-right: none;
                 }
 
-                .amfm-image {
+                .amfm-image img {
                     width: 40px;
                     max-height: 40px !important;
                     border-radius: 50%;
