@@ -34,17 +34,17 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         $this->start_controls_section(
             'section_content',
             [
-                'label' => __('Content', 'plugin-name'),
+                'label' => __('Content', 'amfm-bylines'),
             ]
         );
 
         $this->add_control(
             'show_author',
             [
-                'label' => __('Show Author', 'plugin-name'),
+                'label' => __('Show Author', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
-                'label_on' => __('Yes', 'plugin-name'),
-                'label_off' => __('No', 'plugin-name'),
+                'label_on' => __('Yes', 'amfm-bylines'),
+                'label_off' => __('No', 'amfm-bylines'),
                 'return_value' => 'yes',
                 'default' => 'yes',
             ]
@@ -53,10 +53,10 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         $this->add_control(
             'show_editor',
             [
-                'label' => __('Show Editor', 'plugin-name'),
+                'label' => __('Show Editor', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
-                'label_on' => __('Yes', 'plugin-name'),
-                'label_off' => __('No', 'plugin-name'),
+                'label_on' => __('Yes', 'amfm-bylines'),
+                'label_off' => __('No', 'amfm-bylines'),
                 'return_value' => 'yes',
                 'default' => 'yes',
             ]
@@ -65,10 +65,10 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         $this->add_control(
             'show_reviewer',
             [
-                'label' => __('Show Reviewer', 'plugin-name'),
+                'label' => __('Show Reviewer', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
-                'label_on' => __('Yes', 'plugin-name'),
-                'label_off' => __('No', 'plugin-name'),
+                'label_on' => __('Yes', 'amfm-bylines'),
+                'label_off' => __('No', 'amfm-bylines'),
                 'return_value' => 'yes',
                 'default' => 'yes',
             ]
@@ -85,18 +85,18 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'justify_content',
             [
-                'label' => __('Justify Content', 'plugin-name'),
+                'label' => __('Justify Content', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SELECT,
                 'options' => [
-                    'flex-start' => __('Flex Start', 'plugin-name'),
-                    'center' => __('Center', 'plugin-name'),
-                    'flex-end' => __('Flex End', 'plugin-name'),
-                    'space-between' => __('Space Between', 'plugin-name'),
-                    'space-around' => __('Space Around', 'plugin-name'),
-                    'space-evenly' => __('Space Evenly', 'plugin-name'),
+                    'flex-start' => __('Flex Start', 'amfm-bylines'),
+                    'center' => __('Center', 'amfm-bylines'),
+                    'flex-end' => __('Flex End', 'amfm-bylines'),
+                    'space-between' => __('Space Between', 'amfm-bylines'),
+                    'space-around' => __('Space Around', 'amfm-bylines'),
+                    'space-evenly' => __('Space Evenly', 'amfm-bylines'),
                 ],
                 'default' => 'center',
                 'selectors' => [
@@ -105,17 +105,17 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'align_items',
             [
-                'label' => __('Align Items', 'plugin-name'),
+                'label' => __('Align Items', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SELECT,
                 'options' => [
-                    'flex-start' => __('Flex Start', 'plugin-name'),
-                    'center' => __('Center', 'plugin-name'),
-                    'flex-end' => __('Flex End', 'plugin-name'),
-                    'stretch' => __('Stretch', 'plugin-name'),
-                    'baseline' => __('Baseline', 'plugin-name'),
+                    'flex-start' => __('Flex Start', 'amfm-bylines'),
+                    'center' => __('Center', 'amfm-bylines'),
+                    'flex-end' => __('Flex End', 'amfm-bylines'),
+                    'stretch' => __('Stretch', 'amfm-bylines'),
+                    'baseline' => __('Baseline', 'amfm-bylines'),
                 ],
                 'default' => 'center',
                 'selectors' => [
@@ -124,11 +124,10 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        // Add control to adjust image size height and width
-        $this->add_control(
+        $this->add_responsive_control(
             'image_size',
             [
-                'label' => __('Image Size', 'plugin-name'),
+                'label' => __('Image Size', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px', '%'],
                 'range' => [
@@ -143,10 +142,10 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'image_border_radius',
             [
-                'label' => __('Image Border Radius', 'plugin-name'),
+                'label' => __('Image Border Radius', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px', '%'],
                 'range' => [
@@ -172,10 +171,10 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'col_padding',
             [
-                'label' => __('Column Padding', 'plugin-name'),
+                'label' => __('Column Padding', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%', 'em'],
                 'selectors' => [
@@ -184,10 +183,10 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'col_margin',
             [
-                'label' => __('Column Margin', 'plugin-name'),
+                'label' => __('Column Margin', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px', '%', 'em'],
                 'selectors' => [
@@ -197,6 +196,30 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         );
 
         // end style section
+        $this->end_controls_section();
+
+
+        // responsive border control for author column
+        $this->start_controls_section(
+            'column_control',
+            [
+                'label' => __('Columns', 'amfm-bylines'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        // Add responsive border controls for author
+        $this->add_responsive_control(
+            'author_border',
+            [
+                'label' => __('Author Border', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::BORDER,
+                'selectors' => [
+                    '{{WRAPPER}} #amfm-byline-col-author' => 'border: {{WIDTH}}{{UNIT}} {{STYLE}} {{COLOR}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -242,10 +265,6 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
-
-        $author = $this->fetch_user_info('author');
-        $editor = $this->fetch_user_info('editor');
-        $reviewer = $this->fetch_user_info('reviewedBy');
 
         $bylines = [
             'author' => $this->fetch_user_info('author'),
