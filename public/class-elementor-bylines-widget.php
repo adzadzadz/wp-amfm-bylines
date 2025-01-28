@@ -208,17 +208,203 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        // Add responsive border controls for author
-        $this->add_responsive_control(
-            'author_border',
+        // Start tabs
+        $this->start_controls_tabs('columns_tabs');
+
+        // Author tab
+        $this->start_controls_tab(
+            'author_tab',
             [
-                'label' => __('Author Border', 'amfm-bylines'),
-                'type' => \Elementor\Controls_Manager::BORDER,
+                'label' => __('Author', 'amfm-bylines'),
+            ]
+        );
+
+        $this->add_responsive_control(
+            'author_border_width',
+            [
+                'label' => __('Author Border Width', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
                 'selectors' => [
-                    '{{WRAPPER}} #amfm-byline-col-author' => 'border: {{WIDTH}}{{UNIT}} {{STYLE}} {{COLOR}};',
+                    '{{WRAPPER}} .amfm-byline-col-author' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
+
+        $this->add_control(
+            'author_border_style',
+            [
+                'label' => __('Author Border Style', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'none' => __('None', 'amfm-bylines'),
+                    'solid' => __('Solid', 'amfm-bylines'),
+                    'dotted' => __('Dotted', 'amfm-bylines'),
+                    'dashed' => __('Dashed', 'amfm-bylines'),
+                    'double' => __('Double', 'amfm-bylines'),
+                ],
+                'default' => 'none',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-author' => 'border-style: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'author_border_color',
+            [
+                'label' => __('Author Border Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-author' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'author_border_radius',
+            [
+                'label' => __('Author Border Radius', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-author' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        // Editor tab
+        $this->start_controls_tab(
+            'editor_tab',
+            [
+                'label' => __('Editor', 'amfm-bylines'),
+            ]
+        );
+
+        $this->add_responsive_control(
+            'editor_border_width',
+            [
+                'label' => __('Editor Border Width', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-editor' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'editor_border_style',
+            [
+                'label' => __('Editor Border Style', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'none' => __('None', 'amfm-bylines'),
+                    'solid' => __('Solid', 'amfm-bylines'),
+                    'dotted' => __('Dotted', 'amfm-bylines'),
+                    'dashed' => __('Dashed', 'amfm-bylines'),
+                    'double' => __('Double', 'amfm-bylines'),
+                ],
+                'default' => 'none',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-editor' => 'border-style: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'editor_border_color',
+            [
+                'label' => __('Editor Border Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-editor' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'editor_border_radius',
+            [
+                'label' => __('Editor Border Radius', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-editor' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        // Reviewer tab
+        $this->start_controls_tab(
+            'reviewer_tab',
+            [
+                'label' => __('Reviewer', 'amfm-bylines'),
+            ]
+        );
+
+        $this->add_responsive_control(
+            'reviewer_border_width',
+            [
+                'label' => __('Reviewer Border Width', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-reviewer' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'reviewer_border_style',
+            [
+                'label' => __('Reviewer Border Style', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'none' => __('None', 'amfm-bylines'),
+                    'solid' => __('Solid', 'amfm-bylines'),
+                    'dotted' => __('Dotted', 'amfm-bylines'),
+                    'dashed' => __('Dashed', 'amfm-bylines'),
+                    'double' => __('Double', 'amfm-bylines'),
+                ],
+                'default' => 'none',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-reviewer' => 'border-style: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'reviewer_border_color',
+            [
+                'label' => __('Reviewer Border Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-reviewer' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'reviewer_border_radius',
+            [
+                'label' => __('Reviewer Border Radius', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-byline-col-reviewer' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        // End tabs
+        $this->end_controls_tabs();
 
         $this->end_controls_section();
     }
@@ -274,16 +460,17 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
 
         echo <<<HTML
             <style>
-                #amfm-byline-col-author,
-                #amfm-byline-col-editor,
-                #amfm-byline-col-reviewer {
+                .amfm-byline-col-author,
+                .amfm-byline-col-editor,
+                .amfm-byline-col-reviewer {
                     /* display: none; */
                     cursor: pointer;
+                    border: none;
                 }
 
-                #amfm-byline-col-editor {
+                /* .amfm-byline-col-editor {
                     border-left: solid 1px  #ccc;
-                }
+                } */
 
                 .amfm-bylines-container {
                     display: flex;
@@ -292,6 +479,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     width: 100%;
                     /* border: 1px solid #ccc; */
                     background: #fff;
+                    justify-content: space-between;
                 }
 
                 .amfm-bylines-container .amfm-column {
@@ -311,6 +499,12 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
 
                 .amfm-column:last-child {
                     border-right: none;
+                }
+
+                .amfm-image {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 .amfm-image img {
@@ -359,21 +553,6 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     left: 0;
                     top: 14%;
                 }
-
-                @media (max-width: 1024px) {
-                    .amfm-border-left {
-                        left: -3% !important;
-                    }
-                }
-                @media (max-width: 768px) {
-                    .amfm-border-left {
-                        display: none;
-                    }
-                    .amfm-byline-column, #amfm-byline-col-editor {
-                        border-left: none !important;
-                        border-right: none !important;
-                    }
-                }
             </style>
         HTML;
 
@@ -397,7 +576,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             $type_title = ucfirst($type);
 
             echo <<<HTML
-            <div class="amfm-column" id="amfm-byline-col-{$type}">
+            <div class="amfm-column amfm-byline-col-{$type}">
                 <div class="amfm-text">{$type_title}:</div>
                 <div class="amfm-image">{$byline['img']}</div>
                 <div class="amfm-row-text-container">
