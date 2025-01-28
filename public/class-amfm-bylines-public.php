@@ -397,7 +397,7 @@ class Amfm_Bylines_Public
 	 * @param boolean $use_cpt
 	 * @return object|false
 	 */
-	private function get_byline($type, $use_cpt = false)
+	public function get_byline($type, $use_cpt = false)
 	{
 		$tags = get_the_tags();
 
