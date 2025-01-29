@@ -419,7 +419,7 @@ class Amfm_Bylines_Public
 					}
 
 					// In the press
-					if ($is_medical_webpage && strpos($tag->slug, 'in-the-press-by') === 0 && $type === 'inThePress') {
+					if (strpos($tag->slug, 'in-the-press-by') === 0 && $type === 'inThePress') {
 						return $this->get_staff($tag->slug);
 					}
 
