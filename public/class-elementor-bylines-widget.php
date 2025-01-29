@@ -160,6 +160,18 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        // add image border radius color control
+        $this->add_control(
+            'image_border_color',
+            [
+                'label' => __('Image Border Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-image img' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
 
         // Start Style Section
