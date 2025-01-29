@@ -50,6 +50,19 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        // if show_author is set to yes, show control to change the label text
+        $this->add_control(
+            'author_label',
+            [
+                'label' => __('Author Label', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Author:', 'amfm-bylines'),
+                'condition' => [
+                    'show_author' => 'yes',
+                ],
+            ]
+        );
+
         $this->add_control(
             'show_editor',
             [
@@ -62,6 +75,19 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        // if show_editor is set to yes, show control to change the label text
+        $this->add_control(
+            'editor_label',
+            [
+                'label' => __('Editor Label', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Editor:', 'amfm-bylines'),
+                'condition' => [
+                    'show_editor' => 'yes',
+                ],
+            ]
+        );
+
         $this->add_control(
             'show_reviewer',
             [
@@ -71,6 +97,45 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 'label_off' => __('No', 'amfm-bylines'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+            ]
+        );
+
+        // if show_reviewer is set to yes, show control to change the label text
+        $this->add_control(
+            'reviewer_label',
+            [
+                'label' => __('Reviewer Label', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Reviewer:', 'amfm-bylines'),
+                'condition' => [
+                    'show_reviewer' => 'yes',
+                ],
+            ]
+        );
+
+        // add control for "in-the-press"
+        $this->add_control(
+            'show_in_the_press',
+            [
+                'label' => __('Show In The Press', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Yes', 'amfm-bylines'),
+                'label_off' => __('No', 'amfm-bylines'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+            ]
+        );
+
+        // if show_in_the_press is set to yes, show control to change the label text
+        $this->add_control(
+            'in_the_press_label',
+            [
+                'label' => __('In The Press Label', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => __('Featured:', 'amfm-bylines'),
+                'condition' => [
+                    'show_in_the_press' => 'yes',
+                ],
             ]
         );
 
@@ -467,14 +532,16 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         $bylines = [
             'author' => $this->fetch_user_info('author'),
             'editor' => $this->fetch_user_info('editor'),
-            'reviewer' => $this->fetch_user_info('reviewedBy')
+            'reviewer' => $this->fetch_user_info('reviewedBy'),
+            'inThePress' => $this->fetch_user_info('inThePress'),
         ];
 
         echo <<<HTML
             <style>
                 .amfm-byline-col-author,
                 .amfm-byline-col-editor,
-                .amfm-byline-col-reviewer {
+                .amfm-byline-col-reviewer,
+                .amfm-byline-col-in-the-press {
                     /* display: none; */
                     cursor: pointer;
                     border: none;
@@ -571,25 +638,33 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         echo '<div class="amfm-bylines-container">';
 
         foreach ($bylines as $type => $byline) {
-            if ($type === 'author' && $settings['show_author'] !== 'yes') {
-                break;
-            }
-            if ($type === 'editor' && ($settings['show_author'] !== 'yes' || $settings['show_editor'] !== 'yes')) {
-                break;
-            }
-            if ($type === 'reviewer' && ($settings['show_author'] !== 'yes' || $settings['show_editor'] !== 'yes' || $settings['show_reviewer'] !== 'yes')) {
-                break;
-            }
-
             if (!$byline) {
                 continue;
             }
 
-            $type_title = ucfirst($type);
+            // Handle inThePress independently
+            if ($type === 'inThePress') {
+                if ($settings['show_in_the_press'] !== 'yes') {
+                    continue;
+                }
+                $type_label = $settings['in_the_press_label'];
+            } else {
+                // Handle author, editor, and reviewer
+                if ($settings['show_author'] !== 'yes') {
+                    continue;
+                }
+                if ($type === 'editor' && $settings['show_editor'] !== 'yes') {
+                    continue;
+                }
+                if ($type === 'reviewer' && ($settings['show_editor'] !== 'yes' || $settings['show_reviewer'] !== 'yes')) {
+                    continue;
+                }
+                $type_label = $settings["{$type}_label"];
+            }
 
             echo <<<HTML
             <div class="amfm-column amfm-byline-col-{$type}">
-                <div class="amfm-text">{$type_title}:</div>
+                <div class="amfm-text">{$type_label}</div>
                 <div class="amfm-image">{$byline['img']}</div>
                 <div class="amfm-row-text-container">
                     <div class="amfm-row-text-name">{$byline['name']}</div>

@@ -417,6 +417,12 @@ class Amfm_Bylines_Public
 					if ($is_medical_webpage && strpos($tag->slug, 'medically-reviewed-by') === 0 && $type === 'reviewedBy') {
 						return $this->get_staff($tag->slug);
 					}
+
+					// In the press
+					if ($is_medical_webpage && strpos($tag->slug, 'in-the-press-by') === 0 && $type === 'inThePress') {
+						return $this->get_staff($tag->slug);
+					}
+
 				}
 			}
 		} else {
