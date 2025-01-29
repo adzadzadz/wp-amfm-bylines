@@ -38,16 +38,21 @@
 		// console.log(amfmLocalize.editor_page_url)
 		// console.log(amfmLocalize.reviewer_page_url)
 
-		$('#amfm-byline-col-author').on('click', function() {
+		$('.amfm-byline-col-author').on('click', function() {
 			window.location.href =  "//" + amfmLocalize.author_page_url;
 		});
 
-		$('#amfm-byline-col-editor').on('click', function() {
+		$('.amfm-byline-col-editor').on('click', function() {
 			window.location.href =  "//" + amfmLocalize.editor_page_url;
 		});
 
-		$('#amfm-byline-col-reviewer').on('click', function() {
+		$('.amfm-byline-col-reviewer').on('click', function() {
 			window.location.href =  "//" + amfmLocalize.reviewer_page_url;
+		});
+
+		// add in-the-press link
+		$('.amfm-byline-col-in-the-press').on('click', function() {
+			window.location.href =  "//" + amfmLocalize.in_the_press_page_url;
 		});
 
 		// Adjust widths to fit 100% total

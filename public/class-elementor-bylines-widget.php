@@ -648,6 +648,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     continue;
                 }
                 $type_label = $settings['in_the_press_label'];
+                $type_class = 'in-the-press';
             } else {
                 // Handle author, editor, and reviewer
                 if ($settings['show_author'] !== 'yes') {
@@ -660,10 +661,11 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     continue;
                 }
                 $type_label = $settings["{$type}_label"];
+                $type_class = $type;
             }
 
             echo <<<HTML
-            <div class="amfm-column amfm-byline-col-{$type}">
+            <div class="amfm-column amfm-byline-col-{$type_class}">
                 <div class="amfm-text">{$type_label}</div>
                 <div class="amfm-image">{$byline['img']}</div>
                 <div class="amfm-row-text-container">
