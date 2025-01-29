@@ -52,6 +52,7 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
                     'author' => __('Author', 'amfm-bylines'),
                     'editor' => __('Editor', 'amfm-bylines'),
                     'reviewer' => __('Reviewer', 'amfm-bylines'),
+                    'in-the-press' => __('In the Press', 'amfm-bylines'),
                 ],
             ]
         );
@@ -214,6 +215,9 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
                 break;
             case 'reviewer':
                 $tag_prefix = 'reviewed-by-';
+                break;
+            case 'in-the-press':
+                $tag_prefix = 'in-the-press-by-';
                 break;
         }
 
