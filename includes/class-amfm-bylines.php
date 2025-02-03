@@ -106,6 +106,11 @@ class Amfm_Bylines {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-amfm-bylines-loader.php';
 
 		/**
+		 * ACF Related dependencies
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/plugins/acf.php';
+
+		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
