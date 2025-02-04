@@ -115,7 +115,7 @@ class Amfm_Bylines_Public
 			'author_page_url' => $this->get_byline_url('author'),
 			'editor_page_url' => $this->get_byline_url('editor'),
 			'reviewer_page_url' => $this->get_byline_url('reviewedBy'),
-			'in_the_press_page_url'
+			'in_the_press_page_url' => $this->get_byline_url('inThePress'),
 		));
 
 		wp_enqueue_script(
