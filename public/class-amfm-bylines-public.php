@@ -116,6 +116,7 @@ class Amfm_Bylines_Public
 			'editor_page_url' => $this->get_byline_url('editor'),
 			'reviewer_page_url' => $this->get_byline_url('reviewedBy'),
 			'in_the_press_page_url' => $this->get_byline_url('inThePress'),
+			'has_social_linkedin' => $this->get_linkedin_url(),
 		));
 
 		wp_enqueue_script(
@@ -508,6 +509,23 @@ class Amfm_Bylines_Public
 			}
 		}
 
+		return false;
+	}
+
+	/**
+	 * Retrieve the LinkedIn URL for a staff member.
+	 *
+	 * This method checks if the current post is of the 'staff' post type and if the Advanced Custom Fields (ACF) plugin function `get_field` is available.
+	 * If both conditions are met, it retrieves the LinkedIn URL from the custom field associated with the staff member.
+	 *
+	 * @return string|false The LinkedIn URL if available, or false if not.
+	 */
+	private function get_linkedin_url()
+	{
+		if (is_singular('staff') && function_exists('get_field')) {
+			$staff_id = get_the_ID();
+			return get_field('linkedin_url', $staff_id);
+		}
 		return false;
 	}
 

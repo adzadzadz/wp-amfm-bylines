@@ -17,6 +17,10 @@
 
 		console.log("AMFM Running");
 
+		if (has_social_linkedin) {
+			$('.amfm-social-icons-linkedin').removeClass('amfm-hidden');
+		}
+
 		// if (amfmLocalize.author == '1') {
 		// 	$('#amfm-byline-col-author').css('display', 'flex');
 		// }
