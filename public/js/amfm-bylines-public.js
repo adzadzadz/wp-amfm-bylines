@@ -17,7 +17,7 @@
 
 		console.log("AMFM Running");
 
-		if (has_social_linkedin) {
+		if (amfmLocalize.has_social_linkedin) {
 			$('.amfm-social-icons-linkedin').removeClass('amfm-hidden');
 		}
 
