@@ -58,6 +58,20 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_control(
+            'post_type',
+            [
+                'label' => __('Post Type', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'post',
+                'options' => [
+                    'post' => __('Post', 'amfm-bylines'),
+                    'page' => __('Page', 'amfm-bylines'),
+                    'both' => __('Both', 'amfm-bylines'),
+                ],
+            ]
+        );
+
+        $this->add_control(
             'posts_count',
             [
                 'label' => __('Number of Posts', 'amfm-bylines'),
@@ -237,11 +251,12 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
             return $tag->term_id;
         }, $tags);
 
-        // Create the custom query to fetch posts with the same tags
+        // Create the custom query to fetch posts or pages with the same tags
+        $post_type = $settings['post_type'];
         $args = [
-            'post_type'      => 'post', // Native "post" type
+            'post_type'      => $post_type === 'both' ? ['post', 'page'] : $post_type, // Use the selected post type
             'posts_per_page' => $posts_per_page,
-            'post__not_in'   => [$post->ID], // Exclude the current post
+            'post__not_in'   => [$post->ID], // Exclude the current post/page
             'tag__in'        => $tag_ids, // Filter by tags
             'orderby'        => 'date',
             'order'          => 'DESC',
