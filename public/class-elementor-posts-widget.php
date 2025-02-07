@@ -308,8 +308,9 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
         $settings = $this->get_settings_for_display();
         $posts_per_page    = $settings['posts_count'];
         $related_posts_filter = $settings['related_posts_filter'];
+        $post_type = $settings['post_type'];
 
-        echo '<div class="amfm-related-posts-widget" data-filter="' . esc_attr($related_posts_filter) . '" data-posts-count="' . intval($posts_per_page) . '">';
+        echo '<div id="amfm-related-posts-widget-' . $this->get_id() . '" class="amfm-related-posts-widget" data-amfm-post-type="' . $post_type . '" data-elementor-widget-id="' . $this->get_id() . '" data-filter="' . esc_attr($related_posts_filter) . '" data-posts-count="' . intval($posts_per_page) . '">';
         echo $this->fetch_related_posts($posts_per_page, $related_posts_filter, $settings);
         echo '</div>';
     }

@@ -123,7 +123,7 @@ class Amfm_Bylines_Public
 			$this->plugin_name . "-elementor-widgets",
 			plugin_dir_url(__FILE__) . 'js/amfm-elementor-widgets.js', // Adjust the path to your JS file
 			['jquery'],
-			$this->version,
+			random_int(0000, 9999), // $this->version,
 			true
 		);
 
@@ -553,10 +553,16 @@ class Amfm_Bylines_Public
 	{
 		check_ajax_referer('amfm_nonce', 'security');
 
+		$widget_id = isset($_POST['widget_id']) ? sanitize_text_field($_POST['widget_id']) : false;
 		$filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : 'all';
 		$posts_per_page = isset($_POST['posts_per_page']) ? intval($_POST['posts_per_page']) : 5;
 		$paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
 		$current_post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+		$post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : 'post';
+
+		if (!$widget_id) {
+			wp_send_json(['content' => '<p>No related posts found.</p>']);
+		}
 
 		if (!$current_post_id) {
 			wp_send_json(['content' => '<p>No related posts found.</p>']);
@@ -606,7 +612,7 @@ class Amfm_Bylines_Public
 
 		// Query posts
 		$args = [
-			'post_type'      => 'post',
+			'post_type'      => $post_type === 'both' ? ['post', 'page'] : $post_type,
 			'posts_per_page' => $posts_per_page,
 			'post__not_in'   => [$post->ID],
 			'tag__in'        => $tag_ids,
