@@ -162,6 +162,7 @@ class Amfm_Bylines {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'amfm_bylines_register_settings' );
 
 		// add_action('wp_ajax_fetch_pages', 'fetch_pages');
 		$this->loader->add_action('wp_ajax_fetch_pages', $plugin_admin, 'fetch_pages');
@@ -170,7 +171,6 @@ class Amfm_Bylines {
 		$this->loader->add_action('wp_ajax_toggle_function', $plugin_admin, 'toggle_function');
 		$this->loader->add_action('init', $plugin_admin, 'add_categories_and_tags_to_pages');
 		$this->loader->add_action('wp_ajax_update_staff_order', $plugin_admin, 'update_staff_order_callback');
-
 	}
 
 	/**
