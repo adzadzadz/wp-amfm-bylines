@@ -42,6 +42,7 @@ class GithubUpdater {
     
             if (is_array($this->githubAPIResult) && !empty($this->githubAPIResult)) {
                 $this->githubAPIResult = $this->githubAPIResult[0];
+                $this->githubAPIResult->tag_name = ltrim($this->githubAPIResult->tag_name, 'v');
             } else {
                 $this->githubAPIResult = null;
             }
@@ -55,9 +56,7 @@ class GithubUpdater {
 
         $this->getRepositoryInfo();
 
-        $wait = true;
-
-        $doUpdate = false; //version_compare($this->githubAPIResult->tag_name, $transient->checked[$this->slug], 'gt');
+        $doUpdate = version_compare($this->githubAPIResult->tag_name, $transient->checked[$this->slug], 'gt');
 
         if ($doUpdate) {
             $package = $this->githubAPIResult->zipball_url;
