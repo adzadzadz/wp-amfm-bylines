@@ -14,12 +14,12 @@
  *
  * @wordpress-plugin
  * Plugin Name:       AMFM Bylines
- * Plugin URI:        https://adzjo.online
+ * Plugin URI: https://github.com/adzadzadz/woocommerce-box
  * Description:       Byline Management
  * Version:           2.4.4
  * Author:            Adrian T. Saycon
  * Author URI:        https://adzjo.online/adz/
- * License:           GPL-2.0+
+ * License:           GPL2
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       amfm-bylines
  * Domain Path:       /languages
@@ -40,7 +40,22 @@ define( 'AMFM_BYLINES_VERSION', '2.4.4' );
 require_once plugin_dir_path(__FILE__) . 'lib/GithubUpdater.php';
 
 if (is_admin()) {
-    $updater = new GithubUpdater(__FILE__, 'your-github-username', 'your-repository-name', 'your-access-token');
+    $github_user = get_option('amfm_bylines_github_user', '');
+    $github_repo = get_option('amfm_bylines_github_repo', '');
+    $github_token = get_option('amfm_bylines_github_token', '');
+
+	// if user repo or token is empty or starts with 'default', then don't use the updater
+	if (empty($github_user) || 
+		empty($github_repo) || 
+		empty($github_token) || 
+		strpos($github_user, 'default') === 0 || 
+		strpos($github_repo, 'default') === 0 || 
+		strpos($github_token, 'default') === 0 ) {
+		$updater = null;
+	} else {
+		$updater = new GithubUpdater(__FILE__, $github_user, $github_repo, $github_token);
+	}
+
 }
 
 /**

@@ -142,6 +142,24 @@ class Amfm_Bylines_Admin
 			'amfm-bylines-shortcodes',
 			array($this, 'display_shortcode_guide')
 		);
+
+		add_submenu_page(
+			'amfm',
+			__('Settings', 'amfm-bylines'),
+			__('Settings', 'amfm-bylines'),
+			'manage_options',
+			'amfm_bylines_settings',
+			array($this, 'amfm_bylines_settings_page')
+		);
+	}
+
+	public function amfm_bylines_register_settings() {
+		add_option('amfm_bylines_github_user', 'default_user');
+		add_option('amfm_bylines_github_repo', 'default_repo');
+		add_option('amfm_bylines_github_token', 'default_token');
+		register_setting('amfm_bylines_options_group', 'amfm_bylines_github_user');
+		register_setting('amfm_bylines_options_group', 'amfm_bylines_github_repo');
+		register_setting('amfm_bylines_options_group', 'amfm_bylines_github_token');
 	}
 
 	/**
@@ -157,6 +175,10 @@ class Amfm_Bylines_Admin
 	public function display_shortcode_guide()
 	{
 		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-shortcodes.php';
+	}
+
+	public function amfm_bylines_settings_page() {
+		include plugin_dir_path(__FILE__) . 'partials/amfm-bylines-settings-page.php';
 	}
 
 	public function toggle_function()

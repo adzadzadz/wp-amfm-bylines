@@ -12,8 +12,10 @@ class GithubUpdater {
         add_filter("pre_set_site_transient_update_plugins", array($this, "setTransitent"));
         add_filter("plugins_api", array($this, "setPluginInfo"), 10, 3);
         add_filter("upgrader_post_install", array($this, "postInstall"), 10, 3);
+        add_action('admin_notices', array($this, 'showUpdateNotification'));
 
         $this->slug = plugin_basename($pluginFile);
+        $this->pluginData = get_plugin_data($pluginFile);
         $this->username = $githubUsername;
         $this->repository = $githubRepository;
         $this->authorizeToken = $authorizeToken;
@@ -22,17 +24,26 @@ class GithubUpdater {
     private function getRepositoryInfo() {
         if (empty($this->githubAPIResult)) {
             $url = "https://api.github.com/repos/{$this->username}/{$this->repository}/releases";
+            $args = array();
+    
             if (!empty($this->authorizeToken)) {
-                $url = add_query_arg(array('access_token' => $this->authorizeToken), $url);
+                $args = array(
+                    'headers' => array(
+                        'Authorization' => 'token ' . $this->authorizeToken
+                    )
+                );
             }
-
-            $this->githubAPIResult = wp_remote_retrieve_body(wp_remote_get($url));
+    
+            $response = wp_remote_get($url, $args);
+            $this->githubAPIResult = wp_remote_retrieve_body($response);
             if (!empty($this->githubAPIResult)) {
                 $this->githubAPIResult = @json_decode($this->githubAPIResult);
             }
-
-            if (is_array($this->githubAPIResult)) {
+    
+            if (is_array($this->githubAPIResult) && !empty($this->githubAPIResult)) {
                 $this->githubAPIResult = $this->githubAPIResult[0];
+            } else {
+                $this->githubAPIResult = null;
             }
         }
     }
@@ -44,7 +55,9 @@ class GithubUpdater {
 
         $this->getRepositoryInfo();
 
-        $doUpdate = version_compare($this->githubAPIResult->tag_name, $transient->checked[$this->slug], 'gt');
+        $wait = true;
+
+        $doUpdate = false; //version_compare($this->githubAPIResult->tag_name, $transient->checked[$this->slug], 'gt');
 
         if ($doUpdate) {
             $package = $this->githubAPIResult->zipball_url;
@@ -94,5 +107,30 @@ class GithubUpdater {
         }
 
         return $result;
+    }
+
+    public function showUpdateNotification() {
+        $this->getRepositoryInfo();
+
+        $pluginData = get_plugin_data(WP_PLUGIN_DIR . '/' . $this->slug);
+        $currentVersion = $pluginData['Version'];
+        $newVersion = $this->githubAPIResult->tag_name;
+
+        if (version_compare($currentVersion, $newVersion, '<')) {
+            $updateUrl = wp_nonce_url(
+                self_admin_url('update.php?action=upgrade-plugin&plugin=') . $this->slug,
+                'upgrade-plugin_' . $this->slug
+            );
+
+            echo '<div class="notice notice-warning is-dismissible">';
+            echo '<p>';
+            echo sprintf(
+                __('There is a new version of %1$s available. <a href="%2$s">Update now</a>.'),
+                esc_html($pluginData['Name']),
+                esc_url($updateUrl)
+            );
+            echo '</p>';
+            echo '</div>';
+        }
     }
 }
