@@ -37,6 +37,12 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'AMFM_BYLINES_VERSION', '2.4.4' );
 
+require_once plugin_dir_path(__FILE__) . 'lib/GithubUpdater.php';
+
+if (is_admin()) {
+    $updater = new GithubUpdater(__FILE__, 'your-github-username', 'your-repository-name', 'your-access-token');
+}
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-amfm-bylines-activator.php
