@@ -157,7 +157,7 @@ class Amfm_Bylines_Public
 	public function manage_bylines_schema_with_staff_cpt()
 	{
 		add_filter('rank_math/json_ld', function ($data, $jsonld) {
-
+			
 			if (is_singular('post') || is_page()) {
 
 				// get this post/page author, editor, and reviewedBy tags
@@ -269,7 +269,41 @@ class Amfm_Bylines_Public
 				}
 
 				return $data;
+			} elseif (is_singular('staff')) {
+
+				// Use person schema if the post is a staff post
+				$staff = get_post();
+				$staff_data = get_fields($staff->ID);
+
+				$staff_schema = array(
+					'@type' => 'Person',
+					'name' => $staff->post_title,
+					'jobTitle' => $staff_data['job_title'],
+					'worksFor' => array(
+						'@type' => 'Organization',
+						'name' => $staff_data['works_for']
+					),
+					'url' => get_permalink($staff->ID),
+					'image' => get_the_post_thumbnail_url($staff->ID),
+					'email' => $staff_data['email'],
+					'telephone' => $staff_data['telephone'],
+					'sameAs' => array(
+						$staff_data['linkedin_url']
+					),
+					'description' => $staff_data['description'],
+					'knowsAbout' => $staff_data['knows_about'],
+					'alumniOf' => array(
+						'@type' => 'EducationalOrganization',
+						'name' => $staff_data['alumni_of']
+					),
+					'award' => $staff_data['award']
+				);
+
+				$data['Person'] = $staff_schema;
+
 			}
+			
+			return $data;
 		}, 99, 2);
 	}
 
