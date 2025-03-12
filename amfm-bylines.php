@@ -37,27 +37,6 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'AMFM_BYLINES_VERSION', '2.5.2' );
 
-require_once plugin_dir_path(__FILE__) . 'lib/GithubUpdater.php';
-
-if (is_admin()) {
-    $github_user = get_option('amfm_bylines_github_user', '');
-    $github_repo = get_option('amfm_bylines_github_repo', '');
-    $github_token = get_option('amfm_bylines_github_token', '');
-
-	// if user repo or token is empty or starts with 'default', then don't use the updater
-	if (empty($github_user) || 
-		empty($github_repo) || 
-		empty($github_token) || 
-		strpos($github_user, 'default') === 0 || 
-		strpos($github_repo, 'default') === 0 || 
-		strpos($github_token, 'default') === 0 ) {
-		$updater = null;
-	} else {
-		$updater = new GithubUpdater(__FILE__, $github_user, $github_repo, $github_token);
-	}
-
-}
-
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-amfm-bylines-activator.php
