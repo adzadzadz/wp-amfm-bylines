@@ -288,14 +288,20 @@ class Amfm_Bylines_Public
 					'@type' => 'Person',
 					'name' => $staff->post_title,
 					'jobTitle' => $staff_data['job_title'],
+					// add honorific suffix and has credential
+					'honorificSuffix' => $staff_data['honorific_suffix'],
+					'hasCredential' => array(
+						'@type' => 'EducationalOccupationalCredential',
+						'name' => $staff_data['credential_name']
+					),
 					'worksFor' => array(
 						'@type' => 'Organization',
 						'name' => $staff_data['works_for']
 					),
 					'url' => get_permalink($staff->ID),
 					'image' => get_the_post_thumbnail_url($staff->ID),
-					'email' => $staff_data['email'],
-					'telephone' => $staff_data['telephone'],
+					// 'email' => $staff_data['email'],
+					// 'telephone' => $staff_data['telephone'],
 					'sameAs' => array(
 						$staff_data['linkedin_url']
 					),
