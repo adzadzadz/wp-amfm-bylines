@@ -275,7 +275,16 @@ class Amfm_Bylines_Public
 				$staff = get_post();
 				$staff_data = get_fields($staff->ID);
 
-				$staff_schema = array(
+				// unset BreadcrumbList schema
+				if (isset($data['BreadcrumbList'])) {
+					unset($data['BreadcrumbList']);
+				}
+
+				$data['ProfilePage']['@context'] = 'https://schema.org';
+				$data['ProfilePage']['@type'] = 'ProfilePage';
+				$data['ProfilePage']['dateCreated'] = get_the_date('c');
+				$data['ProfilePage']['dateModified'] = get_the_modified_date('c');
+				$data['ProfilePage']['mainEntity'] = array(
 					'@type' => 'Person',
 					'name' => $staff->post_title,
 					'jobTitle' => $staff_data['job_title'],
@@ -298,8 +307,6 @@ class Amfm_Bylines_Public
 					),
 					'award' => $staff_data['award']
 				);
-
-				$data['Person'] = $staff_schema;
 
 			}
 			
