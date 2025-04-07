@@ -41,3 +41,33 @@ add_shortcode('amfm_acf', function ($atts) {
     return $value;
 });
 
+add_shortcode('amfm_acf_object', function ($atts) {
+    $atts = shortcode_atts([
+        'field' => '',
+        'property' => '',
+        'post_id' => null, // Default to current post
+        'size' => 'full',  // Default image size
+    ], $atts);
+
+    if (empty($atts['field']) || empty($atts['property'])) {
+        return 'Missing field or property';
+    }
+
+    $post_id = $atts['post_id'] ? $atts['post_id'] : get_the_ID();
+    $object = get_field($atts['field'], $post_id);
+
+    if (is_object($object)) {
+        // Handle Featured Image
+        if ($atts['property'] === 'thumbnail') {
+            $thumbnail_url = get_the_post_thumbnail_url($object->ID, $atts['size']);
+            return $thumbnail_url ? '<img src="' . esc_url($thumbnail_url) . '" alt="Thumbnail">' : 'No image';
+        }
+
+        // Handle other properties
+        if (isset($object->{$atts['property']})) {
+            return esc_html($object->{$atts['property']});
+        }
+    }
+
+    return 'Invalid object or property';
+});
