@@ -2,7 +2,7 @@
 
 if (! defined('ABSPATH')) exit; // Exit if accessed directly
 
-class Elementor_Show_Widget_Widget extends \Elementor\Widget_Base
+class Elementor_Show_Widget extends \Elementor\Widget_Base
 {
 
     // Widget Name
@@ -50,16 +50,6 @@ class Elementor_Show_Widget_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_control(
-            'start_datetime',
-            [
-                'label' => __('Start DateTime', 'amfm-bylines'),
-                'type' => \Elementor\Controls_Manager::DATE_TIME,
-                'default' => date('Y-m-d H:i:s'),
-                'description' => __('Set the start datetime.', 'amfm-bylines'),
-            ]
-        );
-
-        $this->add_control(
             'end_datetime',
             [
                 'label' => __('End DateTime', 'amfm-bylines'),
@@ -97,4 +87,4 @@ class Elementor_Show_Widget_Widget extends \Elementor\Widget_Base
 }
 
 // Register Widget
-\Elementor\Plugin::instance()->widgets_manager->register_widget_type(new Elementor_Show_Widget_Widget());
+\Elementor\Plugin::instance()->widgets_manager->register_widget_type(new Elementor_Show_Widget());
