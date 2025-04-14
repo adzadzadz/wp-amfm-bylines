@@ -72,7 +72,7 @@ class Elementor_Show_Widget extends \Elementor\Widget_Base
         $current_datetime = strtotime(date('Y-m-d H:i:s', time()));
 
         echo '<style>'; 
-        echo '#' . $this->get_id() . ' .elementor-widget-container { margin: 0px; }'; 
+        echo '.elementor-element-' . $this->get_id() . ' { margin: 0px !important; }'; 
         echo '</style>';
 
         if ( $end_datetime && $current_datetime > $end_datetime ) {
