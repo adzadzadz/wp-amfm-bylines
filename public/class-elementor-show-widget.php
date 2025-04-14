@@ -68,23 +68,23 @@ class Elementor_Show_Widget extends \Elementor\Widget_Base
         $classnames = isset($settings['classnames']) ? esc_attr($settings['classnames']) : '';
         $classnames_array = array_map('trim', explode(',', $classnames));
 
-        $start_datetime = isset($settings['start_datetime']) ? strtotime($settings['start_datetime']) : null;
         $end_datetime = isset($settings['end_datetime']) ? strtotime($settings['end_datetime']) : null;
-        $current_datetime = time();
+        $current_datetime = strtotime(date('Y-m-d H:i:s', time()));
 
-        $style = 'display: none;';
-        if ($start_datetime && $end_datetime && $current_datetime >= $start_datetime && $current_datetime <= $end_datetime) {
-            $style = '';
-        }
+        echo '<style>'; 
+        echo '#' . $this->get_id() . ' .elementor-widget-container { margin: 0px; }'; 
+        echo '</style>';
 
-        $classnames_string = implode(' ', array_map(function ($classname) {
-            return trim($classname);
-        }, $classnames_array));
+        if ( $end_datetime && $current_datetime > $end_datetime ) {
+            $classnames_string = implode(', ', array_map(function ($classname) {
+                return '.' . trim($classname);
+            }, $classnames_array));
 
-        if ($classnames_string) {
-            echo '<style>';
-            echo $classnames_string . ' { display: none; }';
-            echo '</style>';
+            if ($classnames_string) {
+                echo '<style>';
+                echo $classnames_string . ' { display: none; }';
+                echo '</style>';
+            }
         }
     }
 }
