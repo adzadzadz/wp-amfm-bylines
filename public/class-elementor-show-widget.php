@@ -81,8 +81,11 @@ class Elementor_Show_Widget extends \Elementor\Widget_Base
             return trim($classname);
         }, $classnames_array));
 
-        echo '<div class="' . $classnames_string . '" style="' . $style . '">';
-        echo '</div>';
+        if ($classnames_string) {
+            echo '<style>';
+            echo $classnames_string . ' { display: none; }';
+            echo '</style>';
+        }
     }
 }
 
