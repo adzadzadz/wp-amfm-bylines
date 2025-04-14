@@ -50,21 +50,21 @@ class Elementor_Show_Widget_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_control(
-            'start_date',
+            'start_datetime',
             [
-                'label' => __('Start Date', 'amfm-bylines'),
+                'label' => __('Start DateTime', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::DATE_TIME,
                 'default' => date('Y-m-d H:i:s'),
-                'description' => __('Set the start date.', 'amfm-bylines'),
+                'description' => __('Set the start datetime.', 'amfm-bylines'),
             ]
         );
 
         $this->add_control(
-            'end_date',
+            'end_datetime',
             [
-                'label' => __('End Date', 'amfm-bylines'),
+                'label' => __('End DateTime', 'amfm-bylines'),
                 'type' => \Elementor\Controls_Manager::DATE_TIME,
-                'description' => __('Set the end date.', 'amfm-bylines'),
+                'description' => __('Set the end datetime.', 'amfm-bylines'),
             ]
         );
 
@@ -78,29 +78,21 @@ class Elementor_Show_Widget_Widget extends \Elementor\Widget_Base
         $classnames = isset($settings['classnames']) ? esc_attr($settings['classnames']) : '';
         $classnames_array = array_map('trim', explode(',', $classnames));
 
-        $start_date = isset($settings['start_date']) ? strtotime($settings['start_date']) : null;
-        $end_date = isset($settings['end_date']) ? strtotime($settings['end_date']) : null;
-        $current_date = time();
+        $start_datetime = isset($settings['start_datetime']) ? strtotime($settings['start_datetime']) : null;
+        $end_datetime = isset($settings['end_datetime']) ? strtotime($settings['end_datetime']) : null;
+        $current_datetime = time();
 
         $style = 'display: none;';
-        if ($start_date && $end_date && $current_date >= $start_date && $current_date <= $end_date) {
-            $style = false;
+        if ($start_datetime && $end_datetime && $current_datetime >= $start_datetime && $current_datetime <= $end_datetime) {
+            $style = '';
         }
 
-        $classnames_string = false;
-        if ($style) {
-            // echo all the classnames listed in this format .{classname}, .{classname}, .{classname}
-            $classnames_string = implode(', ', array_map(function ($classname) {
-                return '.' . trim($classname);
-            }, $classnames_array));
+        $classnames_string = implode(' ', array_map(function ($classname) {
+            return trim($classname);
+        }, $classnames_array));
 
-            if ($classnames_string) {
-                echo '<style>';
-                echo $classnames_string . ' { display: none; }';
-                echo '</style>';
-            }
-        }
-
+        echo '<div class="' . $classnames_string . '" style="' . $style . '">';
+        echo '</div>';
     }
 }
 
