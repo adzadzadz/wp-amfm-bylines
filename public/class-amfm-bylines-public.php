@@ -142,12 +142,31 @@ class Amfm_Bylines_Public
 
 		if ($use_staff_cpt) {
 			$this->manage_bylines_schema_with_staff_cpt();
+			$this->setStaffMeta();
 		} else {
 			$this->manage_bylines_schema();
 		}
 		$this->run_shortcodes();
 
 		$this->run_elementor();
+	}
+
+	/**
+	 * Set the staff meta description
+	 * 
+	 * @return void
+	 */
+	public function setStaffMeta()
+	{
+		add_filter( 'rank_math/frontend/description', function( $description ) {
+			if ( is_singular('staff') ) {
+				$acf_description = get_field('description');
+				if ( $acf_description ) {
+					return wp_strip_all_tags( $acf_description );
+				}
+			}
+			return $description;
+		});
 	}
 
 	/**
