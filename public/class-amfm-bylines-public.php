@@ -158,11 +158,14 @@ class Amfm_Bylines_Public
 	 */
 	public function setStaffMeta()
 	{
-		add_filter( 'rank_math/frontend/description', function( $description ) {
-			if ( is_singular('staff') ) {
-				$acf_description = get_field('description');
-				if ( $acf_description ) {
-					return wp_strip_all_tags( $acf_description );
+		add_filter('rank_math/frontend/description', function ($description) {
+			if (is_singular('staff')) {
+				$meta_description = get_field('staff_meta_description');
+				if (empty($meta_description)) {
+					$meta_description = get_field('description');
+				}
+				if ($meta_description) {
+					return wp_strip_all_tags($meta_description);
 				}
 			}
 			return $description;
