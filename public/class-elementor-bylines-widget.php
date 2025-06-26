@@ -1,5 +1,7 @@
 <?php
 
+use Dom\HTMLElement;
+
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
@@ -51,17 +53,17 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         );
 
         // if show_author is set to yes, show control to change the label text
-        $this->add_control(
-            'author_label',
-            [
-                'label' => __('Author Label', 'amfm-bylines'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => __('Author:', 'amfm-bylines'),
-                'condition' => [
-                    'show_author' => 'yes',
-                ],
-            ]
-        );
+        // $this->add_control(
+        //     'author_label',
+        //     [
+        //         'label' => __('Author Label', 'amfm-bylines'),
+        //         'type' => \Elementor\Controls_Manager::TEXT,
+        //         'default' => __('Author:', 'amfm-bylines'),
+        //         'condition' => [
+        //             'show_author' => 'yes',
+        //         ],
+        //     ]
+        // );
 
         $this->add_control(
             'show_editor',
@@ -76,17 +78,17 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         );
 
         // if show_editor is set to yes, show control to change the label text
-        $this->add_control(
-            'editor_label',
-            [
-                'label' => __('Editor Label', 'amfm-bylines'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => __('Editor:', 'amfm-bylines'),
-                'condition' => [
-                    'show_editor' => 'yes',
-                ],
-            ]
-        );
+        // $this->add_control(
+        //     'editor_label',
+        //     [
+        //         'label' => __('Editor Label', 'amfm-bylines'),
+        //         'type' => \Elementor\Controls_Manager::TEXT,
+        //         'default' => __('Editor:', 'amfm-bylines'),
+        //         'condition' => [
+        //             'show_editor' => 'yes',
+        //         ],
+        //     ]
+        // );
 
         $this->add_control(
             'show_reviewer',
@@ -101,17 +103,17 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         );
 
         // if show_reviewer is set to yes, show control to change the label text
-        $this->add_control(
-            'reviewer_label',
-            [
-                'label' => __('Reviewer Label', 'amfm-bylines'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => __('Reviewer:', 'amfm-bylines'),
-                'condition' => [
-                    'show_reviewer' => 'yes',
-                ],
-            ]
-        );
+        // $this->add_control(
+        //     'reviewer_label',
+        //     [
+        //         'label' => __('Reviewer Label', 'amfm-bylines'),
+        //         'type' => \Elementor\Controls_Manager::TEXT,
+        //         'default' => __('Reviewer:', 'amfm-bylines'),
+        //         'condition' => [
+        //             'show_reviewer' => 'yes',
+        //         ],
+        //     ]
+        // );
 
         // add control for "in-the-press"
         $this->add_control(
@@ -541,10 +543,35 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 .amfm-byline-col-author,
                 .amfm-byline-col-editor,
                 .amfm-byline-col-reviewer,
-                .amfm-byline-col-in-the-press {
+                .amfm-byline-col-in-the-press,
+                .amfm-byline-link-author,
+                .amfm-byline-link-editor {
                     /* display: none; */
                     cursor: pointer;
                     border: none;
+                }
+
+                .amfm-byline-col-main,
+                .amfm-byline-col-reviewer {
+                    justify-content: left !important;
+                }
+
+                @media (min-width: 768px) {
+                    .amfm-byline-col-reviewer::before {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        top: 25%;
+                        height: 50%;
+                        width: 1px;
+                        background-color: #162B67;
+                    }
+
+                    .amfm-byline-col-reviewer {
+                        position: relative !important;
+                        padding-top: 0 !important;
+                        gap: 18px !important;
+                    }
                 }
 
                 /* .amfm-byline-col-editor {
@@ -604,7 +631,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     /* Adds spacing between rows of text */
                 }
 
-                .amfm-text {
+                .amfm-col-80px {
                     font-size: 12px;
                     font-weight: bold;
                     line-height: 1.1em;
@@ -637,43 +664,81 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
 
         echo '<div class="amfm-bylines-container">';
 
-        foreach ($bylines as $type => $byline) {
-            if (!$byline) {
-                continue;
+        if ($bylines['inThePress'] && $settings['show_in_the_press'] === 'yes') {
+            $type_label = $settings['in_the_press_label'];
+            $byline = $bylines['inThePress'];
+
+            echo <<<HTML
+                <div class="amfm-column amfm-byline-col-in-the-press">
+                    <div class="amfm-col-80px">{$type_label}</div>
+                    <div class="amfm-image">{$byline['img']}</div>
+                    <div class="amfm-row-text-container">
+                        <div class="amfm-row-text-name">{$byline['name']}</div>
+                        <div class="amfm-row-text-credentials">{$byline['credentials']}</div>
+                        <div class="amfm-row-text-title">{$byline['title']}</div>
+                    </div>
+                </div>
+            HTML;
+        } else {
+            // Get current post updated at date using format (June 13, 2025)
+            $post_updated_at = get_the_modified_date('F j, Y');
+
+            $author_html = '';
+            $editor_html = '';
+            $reviewer_html = '';
+
+            if ($settings['show_author'] === 'yes') {
+                $author_html = <<<HTML
+                    <div class="amfm-authored-by amfm-byline-link-author">
+                        Authored by: <span style="color: #162B67; font-weight: 700;">{$bylines['author']['name']}, {$bylines['author']['credentials']}</span>
+                    </div>
+                HTML;
             }
 
-            // Handle inThePress independently
-            if ($type === 'inThePress') {
-                if ($settings['show_in_the_press'] !== 'yes') {
-                    continue;
-                }
-                $type_label = $settings['in_the_press_label'];
-                $type_class = 'in-the-press';
-            } else {
-                // Handle author, editor, and reviewer
-                if ($settings['show_author'] !== 'yes') {
-                    continue;
-                }
-                if ($type === 'editor' && $settings['show_editor'] !== 'yes') {
-                    continue;
-                }
-                if ($type === 'reviewer' && ($settings['show_editor'] !== 'yes' || $settings['show_reviewer'] !== 'yes')) {
-                    continue;
-                }
-                $type_label = $settings["{$type}_label"];
-                $type_class = $type;
+            if ($settings['show_editor'] === 'yes') {
+                $editor_html = <<<HTML
+                    <div class="amfm-edited-by amfm-byline-link-editor">
+                        Edited by: <span style="color: #162B67; font-weight: 700;">{$bylines['editor']['name']}, {$bylines['editor']['credentials']}</span>
+                    </div>
+                HTML;
+            }
+
+            if ($settings['show_reviewer'] === 'yes') {
+                $medical_reviewer_logo_url = plugin_dir_url(__FILE__) . 'imgs/medical-reviewer-logo.png';
+
+                $reviewer_html = <<<HTML
+                    <div class="amfm-column amfm-byline-col-reviewer" style="gap: 8px !important; padding-left: 13px !important;">
+                        <div class="col-left amfm-byline-popup-medical-reviewer">
+                            <div class="amfm-image">
+                                <img src="{$medical_reviewer_logo_url}" alt="Medical Reviewer Logo" style="border: none !important; width: 52px !important; max-height: none !important;" />
+                            </div>
+                        </div>
+                        <div class="col-righ amfm-byline-link-reviewer">
+                            <div style="font-size: 12px; color: #636363;">Medically Reviewed by:</div>
+                            <div style="font-size: 12px !important; color: #162B67; font-weight: 700;">
+                                {$bylines['reviewer']['name']}   
+                            </div>
+                        </div>
+                    </div>
+                HTML;
             }
 
             echo <<<HTML
-            <div class="amfm-column amfm-byline-col-{$type_class}">
-                <div class="amfm-text">{$type_label}</div>
-                <div class="amfm-image">{$byline['img']}</div>
-                <div class="amfm-row-text-container">
-                    <div class="amfm-row-text-name">{$byline['name']}</div>
-                    <div class="amfm-row-text-credentials">{$byline['credentials']}</div>
-                    <div class="amfm-row-text-title">{$byline['title']}</div>
+                <div class="amfm-column amfm-byline-col-main">
+                    <div class="col-left">
+                        <div class="amfm-image">{$bylines['author']['img']}</div>
+                    </div>
+                    <div class="col-right">
+                        <div style="font-size: 10px; color: #636363; margin-bottom: 3px;">
+                            {$post_updated_at}
+                        </div>
+                        <div style="font-size: 12px !important;">
+                            {$author_html}
+                            {$editor_html}
+                        </div>
+                    </div>
                 </div>
-            </div>
+                {$reviewer_html}
             HTML;
         }
 
