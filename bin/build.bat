@@ -3,7 +3,7 @@ setlocal
 
 REM Check if a filename is provided
 if "%~1"=="" (
-    echo Usage: build.bat <filename>
+    echo Usage: build.bat ^<filename^>
     exit /b 1
 )
 
@@ -17,7 +17,7 @@ if not exist "%BUILD_DIR%" (
 )
 
 REM Archive the current directory using Git
-git archive --format=zip -o "%BUILD_DIR%\%FILENAME%.zip" HEAD
+git archive --format=zip --output="%BUILD_DIR%\%FILENAME%.zip" HEAD
 
 echo Archive created at %BUILD_DIR%\%FILENAME%.zip
 

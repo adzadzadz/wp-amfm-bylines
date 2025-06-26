@@ -687,7 +687,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             $editor_html = '';
             $reviewer_html = '';
 
-            if ($settings['show_author'] === 'yes') {
+            if ($settings['show_author'] === 'yes' && $bylines['author']) {
                 $author_html = <<<HTML
                     <div class="amfm-authored-by amfm-byline-link-author">
                         Authored by: <span style="color: #162B67; font-weight: 700;">{$bylines['author']['name']}, {$bylines['author']['credentials']}</span>
@@ -695,7 +695,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 HTML;
             }
 
-            if ($settings['show_editor'] === 'yes') {
+            if ($settings['show_author'] === 'yes' && $settings['show_editor'] === 'yes' && $bylines['editor']) {
                 $editor_html = <<<HTML
                     <div class="amfm-edited-by amfm-byline-link-editor">
                         Edited by: <span style="color: #162B67; font-weight: 700;">{$bylines['editor']['name']}, {$bylines['editor']['credentials']}</span>
@@ -703,7 +703,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 HTML;
             }
 
-            if ($settings['show_reviewer'] === 'yes') {
+            if ($settings['show_author'] === 'yes' && $settings['show_editor'] === 'yes' && $settings['show_reviewer'] === 'yes' && $bylines['reviewer']) {
                 $medical_reviewer_logo_url = plugin_dir_url(__FILE__) . 'imgs/medical-reviewer-logo.png';
 
                 $reviewer_html = <<<HTML
@@ -723,23 +723,25 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 HTML;
             }
 
-            echo <<<HTML
-                <div class="amfm-column amfm-byline-col-main">
-                    <div class="col-left">
-                        <div class="amfm-image">{$bylines['author']['img']}</div>
-                    </div>
-                    <div class="col-right">
-                        <div style="font-size: 10px; color: #636363; margin-bottom: 3px;">
-                            {$post_updated_at}
+            if ($author_html) {
+                echo <<<HTML
+                    <div class="amfm-column amfm-byline-col-main">
+                        <div class="col-left">
+                            <div class="amfm-image">{$bylines['author']['img']}</div>
                         </div>
-                        <div style="font-size: 12px !important;">
-                            {$author_html}
-                            {$editor_html}
+                        <div class="col-right">
+                            <div style="font-size: 10px; color: #636363; margin-bottom: 3px;">
+                                {$post_updated_at}
+                            </div>
+                            <div style="font-size: 12px !important;">
+                                {$author_html}
+                                {$editor_html}
+                            </div>
                         </div>
                     </div>
-                </div>
-                {$reviewer_html}
-            HTML;
+                    {$reviewer_html}
+                HTML;
+            }
         }
 
         echo '</div>';
