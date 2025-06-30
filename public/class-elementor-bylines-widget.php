@@ -231,11 +231,12 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
         $this->add_control(
             'image_border_color',
             [
-                'label' => __('Image Border Color', 'amfm-bylines'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .amfm-image img' => 'border-color: {{VALUE}};',
-                ],
+            'label' => __('Image Border Color', 'amfm-bylines'),
+            'type' => \Elementor\Controls_Manager::COLOR,
+            'default' => '', 
+            'selectors' => [
+                '{{WRAPPER}} .amfm-image img' => 'border-color: {{VALUE}};',
+            ],
             ]
         );
 
@@ -555,8 +556,9 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 .amfm-byline-col-reviewer {
                     justify-content: left !important;
                 }
-
+                
                 @media (min-width: 768px) {
+
                     .amfm-byline-col-reviewer::before {
                         content: '';
                         position: absolute;
@@ -571,6 +573,24 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                         position: relative !important;
                         padding-top: 0 !important;
                         gap: 18px !important;
+                    } 
+
+                    .amfm-col-reviewer-new {
+                        gap: 8px !important; 
+                        padding-left: 13px !important; 
+                        padding-top: 20px !important; 
+                        padding-bottom: 20px !important;
+                    }
+                }
+
+                /* mobile only */
+                @media (max-width: 767px) {
+                    .amfm-column {
+                        width: 100%;
+                        flex: 0 0 100% !important;
+                    }
+                    .amfm-col-reviewer-new {
+                        padding: 20px !important;
                     }
                 }
 
@@ -617,7 +637,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                     width: 40px;
                     max-height: 40px !important;
                     border-radius: 50%;
-                    border: 2px #02303C solid;
+                    /* border: 2px #02303C solid; */
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -707,13 +727,13 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
                 $medical_reviewer_logo_url = plugin_dir_url(__FILE__) . 'imgs/medical-reviewer-logo.png';
 
                 $reviewer_html = <<<HTML
-                    <div class="amfm-column amfm-byline-col-reviewer" style="gap: 8px !important; padding-left: 13px !important;">
+                    <div class="amfm-column amfm-byline-col-reviewer amfm-col-reviewer-new">
                         <div class="col-left amfm-byline-popup-medical-reviewer">
                             <div class="amfm-image">
                                 <img src="{$medical_reviewer_logo_url}" alt="Medical Reviewer Logo" style="border: none !important; width: 52px !important; max-height: none !important;" />
                             </div>
                         </div>
-                        <div class="col-righ amfm-byline-link-reviewer">
+                        <div class="col-right amfm-byline-link-reviewer">
                             <div style="font-size: 12px; color: #636363;">Medically Reviewed by:</div>
                             <div style="font-size: 12px !important; color: #162B67; font-weight: 700;">
                                 {$bylines['reviewer']['name']}   
@@ -726,7 +746,7 @@ class Elementor_AMFM_Bylines_Widget extends \Elementor\Widget_Base
             if ($author_html) {
                 echo <<<HTML
                     <div class="amfm-column amfm-byline-col-main">
-                        <div class="col-left">
+                        <div class="col-left" style="min-width: 52px !important;">
                             <div class="amfm-image">{$bylines['author']['img']}</div>
                         </div>
                         <div class="col-right">
