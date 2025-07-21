@@ -4,7 +4,7 @@
 	$(document).ready(function () {
 
 		// Hash link scroll offset
-		const scrollOffset = 60;
+		const scrollOffset = 120;
 
 		// Handle hash links clicks
 		$('a[href*="#"]').on('click', function(e) {

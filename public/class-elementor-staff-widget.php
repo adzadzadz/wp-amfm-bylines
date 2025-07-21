@@ -284,6 +284,18 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        $this->add_control(
+            'show_credentials',
+            [
+                'label' => __('Show Credentials', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Show', 'amfm-bylines'),
+                'label_off' => __('Hide', 'amfm-bylines'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+            ]
+        );
+
         $this->end_controls_section();
 
         $this->start_controls_section(
@@ -458,6 +470,85 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
                 'default' => 'left',
                 'selectors' => [
                     '{{WRAPPER}} .amfm-staff-meta' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        // Credentials Tab
+        $this->start_controls_tab(
+            'credentials_tab',
+            [
+                'label' => __('Credentials', 'amfm-bylines'),
+            ]
+        );
+
+        $this->add_control(
+            'credentials_color',
+            [
+                'label' => __('Credentials Color', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '#666666',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-staff-credentials' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'credentials_typography',
+                'label' => __('Credentials Typography', 'amfm-bylines'),
+                'selector' => '{{WRAPPER}} .amfm-staff-credentials',
+            ]
+        );
+
+        $this->add_control(
+            'credentials_alignment',
+            [
+                'label' => __('Credentials Alignment', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'options' => [
+                    'left' => [
+                        'title' => __('Left', 'amfm-bylines'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __('Center', 'amfm-bylines'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'right' => [
+                        'title' => __('Right', 'amfm-bylines'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'default' => 'left',
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-staff-credentials' => 'text-align: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'credentials_spacing',
+            [
+                'label' => __('Credentials Spacing', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 5,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .amfm-staff-credentials' => 'margin-bottom: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -748,6 +839,12 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
                 // Get custom fields: title and region
                 $title = get_field('title', $post_id);
                 $region = get_field('region', $post_id);
+                $credentials = get_field('credential_name', $post_id);
+
+                // Display credentials if they exist and setting is enabled
+                if ($credentials && $settings['show_credentials'] === 'yes') {
+                    echo '<div class="amfm-staff-credentials">' . esc_html($credentials) . '</div>';
+                }
 
                 // Display custom fields if they exist
                 if ($title || $region) {
