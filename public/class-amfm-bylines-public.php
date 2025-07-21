@@ -76,7 +76,7 @@ class Amfm_Bylines_Public
 		 */
 
 		// wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
-		wp_enqueue_style($this->plugin_name . "-public", plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name . "-public", plugin_dir_url(__FILE__) . 'css/amfm-bylines-public.min.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Amfm_Bylines_Public
 		// wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js', array('jquery'), $this->version, false);
 		wp_enqueue_script(
 			$this->plugin_name,
-			plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.js',
+			plugin_dir_url(__FILE__) . 'js/amfm-bylines-public.min.js',
 			array('jquery'),
 			$this->version,
 			false
@@ -121,7 +121,7 @@ class Amfm_Bylines_Public
 
 		wp_enqueue_script(
 			$this->plugin_name . "-elementor-widgets",
-			plugin_dir_url(__FILE__) . 'js/amfm-elementor-widgets.js', // Adjust the path to your JS file
+			plugin_dir_url(__FILE__) . 'js/amfm-elementor-widgets.min.js', // Adjust the path to your JS file
 			['jquery'],
 			$this->version,
 			true
