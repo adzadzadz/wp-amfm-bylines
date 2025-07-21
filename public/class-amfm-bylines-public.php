@@ -139,7 +139,6 @@ class Amfm_Bylines_Public
 	{
 		// check if option amfm_use_staff_cpt is enabled or not
 		$use_staff_cpt = get_option('amfm_use_staff_cpt');
-
 		if ($use_staff_cpt) {
 			$this->manage_bylines_schema_with_staff_cpt();
 			$this->setStaffMeta();
@@ -178,10 +177,10 @@ class Amfm_Bylines_Public
 	 */
 	public function manage_bylines_schema_with_staff_cpt()
 	{
-		add_filter('rank_math/json_ld', function ($data, $jsonld) {
-			
-			if (is_singular('post') || is_page()) {
+		add_filter('rank_math/json_ld', function ($data) {
 
+			if (is_singular('post') || is_page()) {
+				
 				// get this post/page author, editor, and reviewedBy tags
 				$author_byline = $this->get_byline('author', true);
 				$editor_byline = $this->get_byline('editor', true);
@@ -297,49 +296,50 @@ class Amfm_Bylines_Public
 				$staff = get_post();
 				$staff_data = get_fields($staff->ID);
 
-				// unset BreadcrumbList schema
-				if (isset($data['BreadcrumbList'])) {
-					unset($data['BreadcrumbList']);
-				}
-
-				$data['ProfilePage']['@context'] = 'https://schema.org';
-				$data['ProfilePage']['@type'] = 'ProfilePage';
-				$data['ProfilePage']['dateCreated'] = get_the_date('c');
-				$data['ProfilePage']['dateModified'] = get_the_modified_date('c');
-				$data['ProfilePage']['mainEntity'] = array(
-					'@type' => 'Person',
-					'name' => $staff->post_title,
-					'jobTitle' => $staff_data['job_title'],
-					// add honorific suffix and has credential
-					'honorificSuffix' => $staff_data['honorific_suffix'],
-					'hasCredential' => array(
-						'@type' => 'EducationalOccupationalCredential',
-						'name' => $staff_data['credential_name']
-					),
-					'worksFor' => array(
-						'@type' => 'Organization',
-						'name' => $staff_data['works_for']
-					),
+				// Create ProfilePage schema for staff pages
+				$profile_page_schema = array(
+					'@type' => 'ProfilePage',
+					'@id' => get_permalink($staff->ID) . '#profilepage',
 					'url' => get_permalink($staff->ID),
-					'image' => get_the_post_thumbnail_url($staff->ID),
-					// 'email' => $staff_data['email'],
-					// 'telephone' => $staff_data['telephone'],
-					'sameAs' => array(
-						$staff_data['linkedin_url']
-					),
-					'description' => $staff_data['description'],
-					'knowsAbout' => $staff_data['knows_about'],
-					'alumniOf' => array(
-						'@type' => 'EducationalOrganization',
-						'name' => $staff_data['alumni_of']
-					),
-					'award' => $staff_data['award']
+					'name' => $staff->post_title,
+					'dateCreated' => get_the_date('c'),
+					'dateModified' => get_the_modified_date('c'),
+					'mainEntity' => array(
+						'@type' => 'Person',
+						'@id' => get_permalink($staff->ID) . '#person',
+						'name' => $staff->post_title,
+						'jobTitle' => $staff_data['job_title'],
+						'honorificSuffix' => $staff_data['honorific_suffix'],
+						'hasCredential' => array(
+							'@type' => 'EducationalOccupationalCredential',
+							'name' => $staff_data['credential_name']
+						),
+						'worksFor' => array(
+							'@type' => 'Organization',
+							'name' => $staff_data['works_for']
+						),
+						'url' => get_permalink($staff->ID),
+						'image' => get_the_post_thumbnail_url($staff->ID),
+						'sameAs' => array_filter(array(
+							$staff_data['linkedin_url']
+						)),
+						'description' => $staff_data['description'],
+						'knowsAbout' => $staff_data['knows_about'],
+						'alumniOf' => array(
+							'@type' => 'EducationalOrganization',
+							'name' => $staff_data['alumni_of']
+						),
+						'award' => $staff_data['award']
+					)
 				);
 
+				// Add ProfilePage to the data array instead of creating a separate key
+				$data[] = $profile_page_schema;
+
 			}
-			
+
 			return $data;
-		}, 99, 2);
+		}, 99, 1);
 	}
 
 	public function manage_bylines_schema()
