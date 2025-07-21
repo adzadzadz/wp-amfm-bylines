@@ -51,6 +51,38 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
         return $staff_options;
     }
 
+    // Get Region Options
+    private function get_region_options()
+    {
+        $region_options = ['all' => __('All Regions', 'amfm-bylines')];
+        $staff_query = new WP_Query([
+            'post_type' => 'staff',
+            'posts_per_page' => -1,
+            'meta_key' => 'region',
+            'meta_compare' => 'EXISTS'
+        ]);
+
+        if ($staff_query->have_posts()) {
+            $regions = [];
+            while ($staff_query->have_posts()) {
+                $staff_query->the_post();
+                $region = get_field('region', get_the_ID());
+                if ($region) {
+                    // Normalize the region data (lowercase and trim)
+                    $normalized_region = strtolower(trim($region));
+                    if (!in_array($normalized_region, $regions)) {
+                        $regions[] = $normalized_region;
+                        // Use the original region as the label and normalized as the value
+                        $region_options[$normalized_region] = $region;
+                    }
+                }
+            }
+            wp_reset_postdata();
+        }
+
+        return $region_options;
+    }
+
     // Register Controls
     protected function _register_controls()
     {
@@ -292,6 +324,18 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        // Region filter field
+        $this->add_control(
+            'filter_by_region',
+            [
+                'label' => __('Filter by Region', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => $this->get_region_options(),
+                'default' => 'all',
+                'label_block' => true,
+            ]
+        );
+
         $this->end_controls_section();
 
         // Start Text Section
@@ -528,6 +572,7 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
         $fallback_image = isset($settings['fallback_image']['url']) ? $settings['fallback_image']['url'] : '';
         $query_by_staff = $settings['query_by_staff'];
         $query_staff = $settings['query_staff'];
+        $filter_by_region = $settings['filter_by_region'];
 
         // Determine the query arguments based on the selected staff option
         $query_args = [
@@ -535,48 +580,81 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
             'posts_per_page' => $posts_per_page,
         ];
 
+        // Prepare base meta_query for region filtering
+        $base_meta_query = [];
+        if ($filter_by_region && $filter_by_region !== 'all') {
+            $base_meta_query[] = [
+                'key'     => 'region',
+                'compare' => 'EXISTS'
+            ];
+        }
+
         if ($query_by_staff === 'selected' && !empty($query_staff)) {
             $query_args['post__in'] = $query_staff;
             $query_args['orderby'] = 'post__in'; // Maintain the order of selected staff
+            
+            // Add region filter to selected staff query
+            if (!empty($base_meta_query)) {
+                $query_args['meta_query'] = $base_meta_query;
+            }
 
-            $query_selected_staff = new WP_Query(array_merge($query_args, []));
+            $query_selected_staff = new WP_Query($query_args);
 
             $unique_posts = $query_selected_staff->posts;
         } else {
+            // Build meta_query for first query (amfm_sort > 0)
+            $query1_meta = [
+                [
+                    'key'     => 'amfm_sort',
+                    'value'   => '0',
+                    'compare' => '>',
+                ]
+            ];
+            if (!empty($base_meta_query)) {
+                $query1_meta = array_merge($base_meta_query, $query1_meta);
+                if (count($query1_meta) > 1) {
+                    $query1_meta['relation'] = 'AND';
+                }
+            }
+
             // First query: Fetch staff posts with amfm_sort > 0
             $query1 = new WP_Query(array_merge($query_args, [
                 'orderby'        => 'meta_value_num',
                 'meta_key'       => 'amfm_sort', // The ACF field to sort by
                 'order'          => 'ASC', // Descending order to get higher amfm_sort values first
-                'meta_query'     => [
-                    [
-                        'key'     => 'amfm_sort',
-                        'value'   => '0',
-                        'compare' => '>',
-                    ]
-                ],
+                'meta_query'     => $query1_meta,
             ]));
+
+            // Build meta_query for second query (amfm_sort = 0 or null)
+            $query2_meta = [
+                'relation' => 'OR',
+                [
+                    'key'     => 'amfm_sort',
+                    'value'   => '0',
+                    'compare' => '=',
+                ],
+                [
+                    'key'     => 'amfm_sort',
+                    'compare' => 'NOT EXISTS', // To get posts where amfm_sort is null
+                ],
+                [
+                    'key'     => 'amfm_hide',
+                    'compare' => 'NOT EXISTS',
+                ]
+            ];
+            if (!empty($base_meta_query)) {
+                $query2_meta = [
+                    'relation' => 'AND',
+                    $base_meta_query[0], // Region filter
+                    $query2_meta // The sorting conditions
+                ];
+            }
 
             // Second query: Fetch staff posts where amfm_sort is 0 or null
             $query2 = new WP_Query(array_merge($query_args, [
                 'orderby'        => 'ID',
                 'order'          => 'ASC', // Ascending order so these appear last
-                'meta_query'     => [
-                    'relation' => 'OR',
-                    [
-                        'key'     => 'amfm_sort',
-                        'value'   => '0',
-                        'compare' => '=',
-                    ],
-                    [
-                        'key'     => 'amfm_sort',
-                        'compare' => 'NOT EXISTS', // To get posts where amfm_sort is null
-                    ],
-                    [
-                        'key'     => 'amfm_hide',
-                        'compare' => 'NOT EXISTS',
-                    ]
-                ],
+                'meta_query'     => $query2_meta,
             ]));
 
             // Merge the results from both queries and remove duplicates
@@ -639,6 +717,19 @@ class Elementor_Staff_Grid_Widget extends \Elementor\Widget_Base
                 // Skip if hide_if_no_image is enabled and there is no featured image
                 if ('yes' === $settings['hide_if_no_image'] && !has_post_thumbnail($post_id)) {
                     continue;
+                }
+
+                // Filter by region with data normalization
+                if ($filter_by_region && $filter_by_region !== 'all') {
+                    $post_region = get_field('region', $post_id);
+                    if ($post_region) {
+                        $normalized_post_region = strtolower(trim($post_region));
+                        if ($normalized_post_region !== $filter_by_region) {
+                            continue; // Skip if region doesn't match
+                        }
+                    } else {
+                        continue; // Skip if no region field
+                    }
                 }
 
                 echo '<div class="amfm-staff-item">';

@@ -3,6 +3,48 @@
 
 	$(document).ready(function () {
 
+		// Hash link scroll offset
+		const scrollOffset = 60;
+
+		// Handle hash links clicks
+		$('a[href*="#"]').on('click', function(e) {
+			const href = $(this).attr('href');
+			
+			// Check if it's a hash link on the same page
+			if (href.indexOf('#') === 0) {
+				const target = $(href);
+				
+				if (target.length) {
+					e.preventDefault();
+					const offsetTop = target.offset().top - scrollOffset;
+					
+					$('html, body').animate({
+						scrollTop: offsetTop
+					}, 300);
+					
+					// Update URL hash
+					if (history.pushState) {
+						history.pushState(null, null, href);
+					} else {
+						window.location.hash = href;
+					}
+				}
+			}
+		});
+
+		// Handle direct hash navigation (page load with hash)
+		if (window.location.hash) {
+			setTimeout(function() {
+				const target = $(window.location.hash);
+				if (target.length) {
+					const offsetTop = target.offset().top - scrollOffset;
+					$('html, body').animate({
+						scrollTop: offsetTop
+					}, 300);
+				}
+			}, 100);
+		}
+
 		// Hide columns if no data
 		// if (amfmLocalize.author === '') {
 		// 	$('#amfm-byline-col-author').hide();
