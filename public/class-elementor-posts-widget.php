@@ -80,6 +80,17 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
             ]
         );
 
+        $this->add_control(
+            'hide_containers_when_empty',
+            [
+                'label' => __('Hide Containers When Empty', 'amfm-bylines'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'placeholder' => '.authored-posts-container, .edited-posts-container, .reviewed-posts-container',
+                'description' => __('CSS classes to hide when no results are found (comma-separated)', 'amfm-bylines'),
+                'default' => '',
+            ]
+        );
+
         $this->end_controls_section();
 
         // Start Style Section
@@ -309,10 +320,28 @@ class Elementor_AMFM_Posts_Widget extends \Elementor\Widget_Base
         $posts_per_page    = $settings['posts_count'];
         $related_posts_filter = $settings['related_posts_filter'];
         $post_type = $settings['post_type'];
+        $hide_containers = $settings['hide_containers_when_empty'];
+
+        $content = $this->fetch_related_posts($posts_per_page, $related_posts_filter, $settings);
+        $is_empty = strpos($content, 'No related posts found') !== false;
 
         echo '<div id="amfm-related-posts-widget-' . $this->get_id() . '" class="amfm-related-posts-widget" data-amfm-post-type="' . $post_type . '" data-elementor-widget-id="' . $this->get_id() . '" data-filter="' . esc_attr($related_posts_filter) . '" data-posts-count="' . intval($posts_per_page) . '">';
-        echo $this->fetch_related_posts($posts_per_page, $related_posts_filter, $settings);
+        echo $content;
         echo '</div>';
+
+        // Add JavaScript to hide containers when empty
+        if ($is_empty && !empty($hide_containers)) {
+            $containers = array_map('trim', explode(',', $hide_containers));
+            $selector = implode(', ', $containers);
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const containers = document.querySelectorAll("' . esc_js($selector) . '");
+                    containers.forEach(function(container) {
+                        container.style.display = "none";
+                    });
+                });
+            </script>';
+        }
     }
 }
 

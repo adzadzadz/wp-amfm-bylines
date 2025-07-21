@@ -616,6 +616,7 @@ class Amfm_Bylines_Public
 			require_once 'class-elementor-staff-widget.php';
 			require_once 'class-elementor-bylines-widget.php';
 			require_once 'class-elementor-show-widget.php';
+			require_once 'class-elementor-featured-images-widget.php';
 		// }
 	}
 
