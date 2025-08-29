@@ -139,7 +139,18 @@ class Amfm_Schema_Manager {
             return;
         }
 
+        // Debug logging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('AMFM Schema Manager: Processing schema for post ID ' . $post->ID);
+            error_log('AMFM Schema Manager: Raw schema: ' . substr($custom_schema, 0, 200));
+        }
+
         $parsed_schema = $this->shortcode_parser->parse($custom_schema);
+        
+        if ($parsed_schema === false) {
+            error_log('AMFM Schema Manager: Failed to parse schema for post ID ' . $post->ID);
+            return;
+        }
         
         $final_schema = $this->schema_merger->merge_with_byline_schema($parsed_schema);
         

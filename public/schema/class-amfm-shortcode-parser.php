@@ -73,6 +73,15 @@ class Amfm_Shortcode_Parser {
         
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('AMFM Schema Parser: JSON decode error - ' . json_last_error_msg());
+            error_log('AMFM Schema Parser: Original JSON (first 500): ' . substr($schema_json, 0, 500));
+            error_log('AMFM Schema Parser: Parsed JSON (first 500): ' . substr($parsed_json, 0, 500));
+            
+            // Try to validate what went wrong
+            $test_decode = json_decode($parsed_json);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('AMFM Schema Parser: Still invalid after parsing: ' . json_last_error_msg());
+            }
+            
             return false;
         }
         
@@ -102,9 +111,117 @@ class Amfm_Shortcode_Parser {
      * @return   string                    The JSON string with shortcodes replaced.
      */
     private function parse_shortcodes($json_string) {
-        $pattern = '/{{([^}]+)}}/';
+        // Always try to fix JSON syntax first (adds missing commas around shortcodes)
+        $fixed_json = $this->fix_json_syntax($json_string);
         
-        return preg_replace_callback($pattern, array($this, 'process_shortcode'), $json_string);
+        // Try to decode the potentially fixed JSON
+        $decoded = json_decode($fixed_json, true);
+        
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // If valid JSON, process shortcodes in the decoded structure
+            $processed = $this->process_shortcodes_in_array($decoded);
+            return wp_json_encode($processed, JSON_UNESCAPED_SLASHES);
+        } else {
+            // If still not valid JSON, try direct string replacement of shortcodes
+            // This might make it valid JSON
+            $pattern = '/{{([^}]+)}}/';
+            $with_replacements = preg_replace_callback($pattern, array($this, 'process_shortcode'), $fixed_json);
+            
+            // Try to decode again after replacements
+            $decoded = json_decode($with_replacements, true);
+            
+            if (json_last_error() === JSON_ERROR_NONE) {
+                // Success after replacement
+                return $with_replacements;
+            } else {
+                // Last attempt: fix syntax again after replacements
+                $final_fixed = $this->fix_json_syntax($with_replacements);
+                
+                // Log if still failing
+                $test = json_decode($final_fixed, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('AMFM Schema Parser: Unable to create valid JSON even after fixes');
+                }
+                
+                return $final_fixed;
+            }
+        }
+    }
+    
+    /**
+     * Fix common JSON syntax issues with shortcodes.
+     *
+     * @since    3.1.0
+     * @param    string    $json_string    The JSON string to fix.
+     * @return   string                    The fixed JSON string.
+     */
+    private function fix_json_syntax($json_string) {
+        // Fix missing comma after shortcodes when followed by another element
+        // Match {{...}} followed by optional whitespace/newlines and then { or [ or "
+        $json_string = preg_replace('/(\{\{[^}]+\}\})(\s*)(?=[\{\[\"])/m', '$1,$2', $json_string);
+        
+        // Fix missing comma before shortcodes when preceded by another element
+        // Match } or ] or " followed by optional whitespace/newlines and then {{
+        $json_string = preg_replace('/([\}\]\"])(\s*)(?=\{\{)/m', '$1,$2', $json_string);
+        
+        // Fix double commas that might be introduced
+        $json_string = preg_replace('/,(\s*),/m', ',$1', $json_string);
+        
+        // Fix trailing commas before closing brackets (invalid JSON)
+        $json_string = preg_replace('/,(\s*)([\}\]])/m', '$1$2', $json_string);
+        
+        return $json_string;
+    }
+    
+    /**
+     * Recursively process shortcodes in array/object structure.
+     *
+     * @since    3.1.0
+     * @param    mixed    $data    The data structure to process.
+     * @return   mixed              The processed data structure.
+     */
+    private function process_shortcodes_in_array($data) {
+        if (is_array($data)) {
+            $result = array();
+            foreach ($data as $key => $value) {
+                if (is_string($value) && preg_match('/^{{([^}]+)}}$/', $value, $matches)) {
+                    // This is a shortcode placeholder, replace with actual data
+                    $shortcode_content = trim($matches[1]);
+                    $parts = $this->parse_shortcode_attributes($shortcode_content);
+                    $result[$key] = $this->get_shortcode_data($parts['type'], $parts['attributes']);
+                } else {
+                    $result[$key] = $this->process_shortcodes_in_array($value);
+                }
+            }
+            return $result;
+        } elseif (is_string($data) && strpos($data, '{{') !== false) {
+            // String contains shortcode, process it
+            $pattern = '/{{([^}]+)}}/';
+            return preg_replace_callback($pattern, array($this, 'process_shortcode'), $data);
+        }
+        return $data;
+    }
+    
+    /**
+     * Get shortcode data as array/object.
+     *
+     * @since    3.1.0
+     * @param    string    $type          The shortcode type.
+     * @param    array     $attributes    The shortcode attributes.
+     * @return   mixed                    The shortcode data.
+     */
+    private function get_shortcode_data($type, $attributes) {
+        switch ($type) {
+            case 'location':
+                return $this->get_location_data($attributes);
+            
+            case 'breadcrumbs':
+                return $this->get_breadcrumbs_data($attributes);
+            
+            default:
+                error_log('AMFM Schema Parser: Unknown shortcode type - ' . $type);
+                return null;
+        }
     }
 
     /**
@@ -164,13 +281,13 @@ class Amfm_Shortcode_Parser {
     }
 
     /**
-     * Process location shortcode.
+     * Get location data as array.
      *
      * @since    3.1.0
      * @param    array    $attributes    Shortcode attributes.
-     * @return   string                  The JSON for location schema.
+     * @return   array                   The location schema data.
      */
-    private function process_location_shortcode($attributes) {
+    private function get_location_data($attributes) {
         $brand = isset($attributes['brand']) ? $attributes['brand'] : null;
         $region = isset($attributes['region']) ? $attributes['region'] : null;
         $state = isset($attributes['state']) ? $attributes['state'] : null;
@@ -182,8 +299,59 @@ class Amfm_Shortcode_Parser {
         
         $location_schema = $this->location_handler->generate_location_schema($filters);
         
-        if ($location_schema) {
-            return wp_json_encode($location_schema, JSON_UNESCAPED_SLASHES);
+        return $location_schema ? $location_schema : null;
+    }
+    
+    /**
+     * Get breadcrumbs data as array.
+     *
+     * @since    3.1.0
+     * @param    array    $attributes    Shortcode attributes.
+     * @return   array                   The breadcrumbs schema data.
+     */
+    private function get_breadcrumbs_data($attributes) {
+        global $post;
+        
+        if (!$post) {
+            return null;
+        }
+        
+        $breadcrumbs = array(
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => array()
+        );
+        
+        // Add home
+        $breadcrumbs['itemListElement'][] = array(
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => home_url()
+        );
+        
+        // Add current page
+        $breadcrumbs['itemListElement'][] = array(
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => get_the_title($post),
+            'item' => get_permalink($post)
+        );
+        
+        return $breadcrumbs;
+    }
+    
+    /**
+     * Process location shortcode (for string replacement).
+     *
+     * @since    3.1.0
+     * @param    array    $attributes    Shortcode attributes.
+     * @return   string                  The JSON for location schema.
+     */
+    private function process_location_shortcode($attributes) {
+        $location_data = $this->get_location_data($attributes);
+        
+        if ($location_data) {
+            return wp_json_encode($location_data, JSON_UNESCAPED_SLASHES);
         }
         
         return '""';
