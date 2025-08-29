@@ -22,8 +22,8 @@ echo "{$blue}Core Schema Types Testing{$reset}\n";
 echo "{$blue}========================================{$reset}\n\n";
 
 // Initialize handlers
-$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.0.0');
-$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.0.0', $location_handler);
+$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.1.0');
+$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.1.0', $location_handler);
 
 // Test results tracking
 $test_results = [];

@@ -7,7 +7,7 @@
  * shortcode parsing, location data handling, and schema merging.
  *
  * @link       https://adzjo.online/adz
- * @since      3.0.0
+ * @since      3.1.0
  *
  * @package    Amfm_Bylines
  * @subpackage Amfm_Bylines/public/schema
@@ -18,7 +18,7 @@ class Amfm_Schema_Manager {
     /**
      * The plugin name.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $plugin_name    The plugin name.
      */
@@ -27,7 +27,7 @@ class Amfm_Schema_Manager {
     /**
      * The plugin version.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $version    The plugin version.
      */
@@ -36,7 +36,7 @@ class Amfm_Schema_Manager {
     /**
      * The ACF fields handler.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      Amfm_ACF_Schema_Fields    $acf_fields    The ACF fields handler.
      */
@@ -45,7 +45,7 @@ class Amfm_Schema_Manager {
     /**
      * The shortcode parser.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      Amfm_Shortcode_Parser    $shortcode_parser    The shortcode parser.
      */
@@ -54,7 +54,7 @@ class Amfm_Schema_Manager {
     /**
      * The location handler.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      Amfm_Location_Handler    $location_handler    The location handler.
      */
@@ -63,7 +63,7 @@ class Amfm_Schema_Manager {
     /**
      * The schema merger.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      Amfm_Schema_Merger    $schema_merger    The schema merger.
      */
@@ -72,7 +72,7 @@ class Amfm_Schema_Manager {
     /**
      * Initialize the class and set its properties.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $plugin_name    The plugin name.
      * @param    string    $version        The plugin version.
      */
@@ -87,7 +87,7 @@ class Amfm_Schema_Manager {
     /**
      * Load the required dependencies.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      */
     private function load_dependencies() {
@@ -100,7 +100,7 @@ class Amfm_Schema_Manager {
     /**
      * Initialize the schema components.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      */
     private function init_components() {
@@ -113,7 +113,7 @@ class Amfm_Schema_Manager {
     /**
      * Initialize the schema manager.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function init() {
         add_action('wp_head', array($this, 'output_custom_schema'), 15);
@@ -124,7 +124,7 @@ class Amfm_Schema_Manager {
     /**
      * Output custom schema to the frontend.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function output_custom_schema() {
         global $post;
@@ -151,7 +151,7 @@ class Amfm_Schema_Manager {
     /**
      * Get the ACF fields handler.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   Amfm_ACF_Schema_Fields    The ACF fields handler.
      */
     public function get_acf_fields() {
@@ -161,7 +161,7 @@ class Amfm_Schema_Manager {
     /**
      * Get the shortcode parser.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   Amfm_Shortcode_Parser    The shortcode parser.
      */
     public function get_shortcode_parser() {
@@ -171,7 +171,7 @@ class Amfm_Schema_Manager {
     /**
      * Get the location handler.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   Amfm_Location_Handler    The location handler.
      */
     public function get_location_handler() {
@@ -181,7 +181,7 @@ class Amfm_Schema_Manager {
     /**
      * Get the schema merger.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   Amfm_Schema_Merger    The schema merger.
      */
     public function get_schema_merger() {

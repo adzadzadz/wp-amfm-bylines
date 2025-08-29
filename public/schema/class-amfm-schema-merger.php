@@ -6,7 +6,7 @@
  * Handles merging of custom schema with existing byline module schema.
  *
  * @link       https://adzjo.online/adz
- * @since      3.0.0
+ * @since      3.1.0
  *
  * @package    Amfm_Bylines
  * @subpackage Amfm_Bylines/public/schema
@@ -17,7 +17,7 @@ class Amfm_Schema_Merger {
     /**
      * The plugin name.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $plugin_name    The plugin name.
      */
@@ -26,7 +26,7 @@ class Amfm_Schema_Merger {
     /**
      * The plugin version.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $version    The plugin version.
      */
@@ -35,7 +35,7 @@ class Amfm_Schema_Merger {
     /**
      * Initialize the class and set its properties.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $plugin_name    The plugin name.
      * @param    string    $version        The plugin version.
      */
@@ -47,7 +47,7 @@ class Amfm_Schema_Merger {
     /**
      * Merge custom schema with byline module schema.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $custom_schema    The parsed custom schema.
      * @return   array|false               The merged schema or false on error.
      */
@@ -68,7 +68,7 @@ class Amfm_Schema_Merger {
     /**
      * Get existing byline module schema.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   array    The byline module schema.
      */
     private function get_byline_module_schema() {
@@ -111,7 +111,7 @@ class Amfm_Schema_Merger {
     /**
      * Get basic page schema when no byline schema exists.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   array    Basic page schema.
      */
     private function get_basic_page_schema() {
@@ -166,7 +166,7 @@ class Amfm_Schema_Merger {
     /**
      * Get page description from various sources.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    WP_Post    $post    The post object.
      * @return   string             The page description.
      */
@@ -193,7 +193,7 @@ class Amfm_Schema_Merger {
     /**
      * Merge byline and custom schemas.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $byline_schema    The byline module schema.
      * @param    array    $custom_schema    The custom schema.
      * @return   array                      The merged schema.
@@ -230,7 +230,7 @@ class Amfm_Schema_Merger {
     /**
      * Remove duplicate schema items.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $schema_items    Array of schema items.
      * @return   array                     Deduplicated schema items.
      */
@@ -253,7 +253,7 @@ class Amfm_Schema_Merger {
     /**
      * Get schema identifier for deduplication.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $schema_item    A schema item.
      * @return   string                   The identifier.
      */
@@ -282,7 +282,7 @@ class Amfm_Schema_Merger {
     /**
      * Sort schema items by priority.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $schema_items    Array of schema items.
      * @return   array                     Sorted schema items.
      */
@@ -321,7 +321,7 @@ class Amfm_Schema_Merger {
     /**
      * Validate merged schema.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $merged_schema    The merged schema.
      * @return   array                      Validation result with 'valid' boolean and 'errors' array.
      */
@@ -361,7 +361,7 @@ class Amfm_Schema_Merger {
     /**
      * Get schema merge statistics.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $merged_schema    The merged schema.
      * @return   array                      Merge statistics.
      */

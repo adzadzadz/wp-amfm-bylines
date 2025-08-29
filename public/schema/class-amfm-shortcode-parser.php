@@ -6,7 +6,7 @@
  * Handles parsing of shortcodes in custom schema JSON.
  *
  * @link       https://adzjo.online/adz
- * @since      3.0.0
+ * @since      3.1.0
  *
  * @package    Amfm_Bylines
  * @subpackage Amfm_Bylines/public/schema
@@ -17,7 +17,7 @@ class Amfm_Shortcode_Parser {
     /**
      * The plugin name.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $plugin_name    The plugin name.
      */
@@ -26,7 +26,7 @@ class Amfm_Shortcode_Parser {
     /**
      * The plugin version.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $version    The plugin version.
      */
@@ -35,7 +35,7 @@ class Amfm_Shortcode_Parser {
     /**
      * The location handler.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      Amfm_Location_Handler    $location_handler    The location handler.
      */
@@ -44,7 +44,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Initialize the class and set its properties.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string                   $plugin_name        The plugin name.
      * @param    string                   $version            The plugin version.
      * @param    Amfm_Location_Handler    $location_handler   The location handler.
@@ -58,7 +58,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Parse shortcodes in schema JSON.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $schema_json    The schema JSON with shortcodes.
      * @return   mixed                     The parsed schema array or false on error.
      */
@@ -82,7 +82,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Parse shortcodes in schema JSON and return as JSON string.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $schema_json    The schema JSON with shortcodes.
      * @return   string                    The parsed schema JSON string or empty string on error.
      */
@@ -97,7 +97,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Parse shortcodes in the JSON string.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $json_string    The JSON string with shortcodes.
      * @return   string                    The JSON string with shortcodes replaced.
      */
@@ -110,7 +110,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Process individual shortcode.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $matches    Regex matches.
      * @return   string               The replacement JSON.
      */
@@ -138,7 +138,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Parse shortcode attributes.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $shortcode_content    The shortcode content.
      * @return   array                           Array with 'type' and 'attributes'.
      */
@@ -166,7 +166,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Process location shortcode.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $attributes    Shortcode attributes.
      * @return   string                  The JSON for location schema.
      */
@@ -192,7 +192,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Process breadcrumbs shortcode.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $attributes    Shortcode attributes.
      * @return   string                  The JSON for breadcrumbs schema.
      */
@@ -203,7 +203,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Generate breadcrumbs schema similar to byline module.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   string    The JSON for breadcrumbs schema.
      */
     private function generate_breadcrumbs_schema() {
@@ -282,7 +282,7 @@ class Amfm_Shortcode_Parser {
     /**
      * Get supported shortcode types.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   array    Array of supported shortcode types.
      */
     public function get_supported_shortcodes() {

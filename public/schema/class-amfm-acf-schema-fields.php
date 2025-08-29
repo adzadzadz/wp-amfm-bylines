@@ -6,7 +6,7 @@
  * Handles registration and management of ACF custom schema fields.
  *
  * @link       https://adzjo.online/adz
- * @since      3.0.0
+ * @since      3.1.0
  *
  * @package    Amfm_Bylines
  * @subpackage Amfm_Bylines/public/schema
@@ -17,7 +17,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * The plugin name.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $plugin_name    The plugin name.
      */
@@ -26,7 +26,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * The plugin version.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $version    The plugin version.
      */
@@ -35,7 +35,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Initialize the class and set its properties.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $plugin_name    The plugin name.
      * @param    string    $version        The plugin version.
      */
@@ -47,7 +47,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Initialize ACF fields.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function init() {
         // Try multiple hooks to ensure field registration works
@@ -75,7 +75,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Register ACF schema fields.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function register_schema_fields() {
         if (!function_exists('acf_add_local_field_group')) {
@@ -194,7 +194,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Add schema column to post list.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $columns    Existing columns.
      * @return   array                Modified columns.
      */
@@ -206,7 +206,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Display schema column content.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $column     Column name.
      * @param    int       $post_id    Post ID.
      */
@@ -228,7 +228,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Add Quick Edit custom box.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $column_name    Column name.
      * @param    string    $post_type      Post type.
      */
@@ -275,7 +275,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Add JavaScript for Quick Edit functionality.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function quick_edit_javascript() {
         $screen = get_current_screen();
@@ -343,7 +343,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Handle Quick Edit schema save via AJAX.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function save_quick_edit_schema() {
         check_ajax_referer('amfm_quick_edit_schema', 'nonce');
@@ -362,7 +362,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Get Quick Edit schema data via AJAX.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function get_quick_edit_schema() {
         check_ajax_referer('amfm_quick_edit_schema', 'nonce');
@@ -384,7 +384,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Validate schema JSON.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $schema_json    The schema JSON to validate.
      * @return   array                     Validation result with 'valid' boolean and 'error' message.
      */
@@ -410,7 +410,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Get available shortcode examples.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   array    Array of shortcode examples.
      */
     public function get_shortcode_examples() {
@@ -427,7 +427,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Add schema meta box as fallback when ACF isn't working.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function add_schema_meta_box() {
         // Only add if ACF field isn't registered
@@ -456,7 +456,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Render the schema meta box.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    WP_Post    $post    The post object.
      */
     public function render_schema_meta_box($post) {
@@ -523,7 +523,7 @@ class Amfm_ACF_Schema_Fields {
     /**
      * Save schema meta box data.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    int    $post_id    The post ID.
      */
     public function save_schema_meta_box($post_id) {

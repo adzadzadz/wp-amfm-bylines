@@ -14,8 +14,8 @@ echo "Real-World Schema Example Test\n";
 echo "========================================\n\n";
 
 // Initialize handlers
-$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.0.0');
-$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.0.0', $location_handler);
+$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.1.0');
+$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.1.0', $location_handler);
 
 // Use the exact example from schema_plan.md (lines 75-168)
 $input_schema = '{

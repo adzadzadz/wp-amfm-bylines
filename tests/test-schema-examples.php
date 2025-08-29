@@ -23,7 +23,7 @@ echo "{$yellow}========================================{$reset}\n\n";
 echo "Test 1: Database Location Data Loading\n";
 echo "----------------------------------------\n";
 
-$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.0.0');
+$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.1.0');
 $locations = $location_handler->get_master_locations();
 
 if (!empty($locations)) {
@@ -61,7 +61,7 @@ $test_schema = '{
   ]
 }';
 
-$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.0.0', $location_handler);
+$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.1.0', $location_handler);
 $parsed = $shortcode_parser->parse_to_json($test_schema);
 
 // Check if location shortcode was properly replaced

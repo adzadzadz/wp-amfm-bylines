@@ -6,7 +6,7 @@
  * Handles master location JSON data and generates location-based schema.
  *
  * @link       https://adzjo.online/adz
- * @since      3.0.0
+ * @since      3.1.0
  *
  * @package    Amfm_Bylines
  * @subpackage Amfm_Bylines/public/schema
@@ -17,7 +17,7 @@ class Amfm_Location_Handler {
     /**
      * The plugin name.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $plugin_name    The plugin name.
      */
@@ -26,7 +26,7 @@ class Amfm_Location_Handler {
     /**
      * The plugin version.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $version    The plugin version.
      */
@@ -35,7 +35,7 @@ class Amfm_Location_Handler {
     /**
      * The master location data.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      array    $master_locations    The cached master location data.
      */
@@ -44,7 +44,7 @@ class Amfm_Location_Handler {
     /**
      * The data file path.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      * @var      string    $data_file_path    Path to the master locations JSON file.
      */
@@ -53,7 +53,7 @@ class Amfm_Location_Handler {
     /**
      * Initialize the class and set its properties.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $plugin_name    The plugin name.
      * @param    string    $version        The plugin version.
      */
@@ -67,7 +67,7 @@ class Amfm_Location_Handler {
     /**
      * Get master location data.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    bool    $force_refresh    Whether to force refresh the data.
      * @return   array                     The master location data.
      */
@@ -82,7 +82,7 @@ class Amfm_Location_Handler {
     /**
      * Load master location data from database (wp_options).
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @access   private
      */
     private function load_master_locations() {
@@ -122,7 +122,7 @@ class Amfm_Location_Handler {
     /**
      * Get default location data.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   array    Default location data.
      */
     private function get_default_location_data() {
@@ -188,7 +188,7 @@ class Amfm_Location_Handler {
     /**
      * Save master location data to file.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      */
     public function save_master_locations() {
         $data_dir = dirname($this->data_file_path);
@@ -206,7 +206,7 @@ class Amfm_Location_Handler {
     /**
      * Filter locations based on criteria.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $filters    Filter criteria (brand, region, state).
      * @return   array               Filtered locations.
      */
@@ -257,7 +257,7 @@ class Amfm_Location_Handler {
     /**
      * Generate location schema based on filters.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $filters    Filter criteria.
      * @return   array|false         The location schema or false on error.
      */
@@ -322,7 +322,7 @@ class Amfm_Location_Handler {
     /**
      * Get organization logo URL.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $brand_shortname    The brand shortname.
      * @return   string                        The logo URL.
      */
@@ -344,7 +344,7 @@ class Amfm_Location_Handler {
     /**
      * Get organization description.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    string    $business_name    The business name.
      * @return   string                      The description.
      */
@@ -373,7 +373,7 @@ class Amfm_Location_Handler {
     /**
      * Update master location data.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $new_locations    New location data.
      * @return   bool                       Success status.
      */
@@ -391,7 +391,7 @@ class Amfm_Location_Handler {
     /**
      * Get location statistics.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @return   array    Location statistics.
      */
     public function get_location_statistics() {
@@ -420,7 +420,7 @@ class Amfm_Location_Handler {
     /**
      * Map database location structure to expected format.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $db_locations    Database locations.
      * @return   array                     Mapped locations.
      */
@@ -464,7 +464,7 @@ class Amfm_Location_Handler {
     /**
      * Map location region based on state and other data.
      *
-     * @since    3.0.0
+     * @since    3.1.0
      * @param    array    $db_location    Database location.
      * @return   string                   Mapped region.
      */

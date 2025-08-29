@@ -27,12 +27,12 @@ echo "{$blue}Schema Merger Integration Testing{$reset}\n";
 echo "{$blue}========================================{$reset}\n\n";
 
 // Initialize handlers
-$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.0.0');
-$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.0.0', $location_handler);
+$location_handler = new Amfm_Location_Handler('amfm-bylines', '3.1.0');
+$shortcode_parser = new Amfm_Shortcode_Parser('amfm-bylines', '3.1.0', $location_handler);
 
 // Check if merger class exists and can be instantiated
 if (class_exists('Amfm_Schema_Merger')) {
-    $schema_merger = new Amfm_Schema_Merger('amfm-bylines', '3.0.0');
+    $schema_merger = new Amfm_Schema_Merger('amfm-bylines', '3.1.0');
     echo "{$green}✓ Schema merger initialized successfully{$reset}\n\n";
 } else {
     echo "{$red}✗ Schema merger class not found{$reset}\n\n";
