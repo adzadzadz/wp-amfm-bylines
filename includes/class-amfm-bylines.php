@@ -127,6 +127,11 @@ class Amfm_Bylines {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-amfm-bylines-public.php';
 
+		/**
+		 * Schema module dependencies
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'docs/schema/class-amfm-schema-manager.php';
+
 		$this->loader = new Amfm_Bylines_Loader();
 
 	}
@@ -193,6 +198,12 @@ class Amfm_Bylines {
 
 		$this->loader->add_action('wp_ajax_amfm_fetch_posts', $plugin_public, 'amfm_fetch_related_posts');
 		$this->loader->add_action('wp_ajax_nopriv_amfm_fetch_posts', $plugin_public, 'amfm_fetch_related_posts');
+
+		/**
+		 * Schema module initialization
+		 */
+		$schema_manager = new Amfm_Schema_Manager( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_action('init', $schema_manager, 'init');
 
 	}
 
