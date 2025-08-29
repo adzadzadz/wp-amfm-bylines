@@ -7,14 +7,14 @@ The custom schema functionality has been successfully implemented in the AMFM By
 ## 📁 Files Created
 
 ### Core Schema Classes
-- `docs/schema/class-amfm-schema-manager.php` - Main coordinator class
-- `docs/schema/class-amfm-acf-schema-fields.php` - ACF field registration and management
-- `docs/schema/class-amfm-shortcode-parser.php` - Shortcode parsing system
-- `docs/schema/class-amfm-location-handler.php` - Location data management
-- `docs/schema/class-amfm-schema-merger.php` - Schema merging with byline module
+- `public/schema/class-amfm-schema-manager.php` - Main coordinator class
+- `public/schema/class-amfm-acf-schema-fields.php` - ACF field registration and management
+- `public/schema/class-amfm-shortcode-parser.php` - Shortcode parsing system
+- `public/schema/class-amfm-location-handler.php` - Location data management
+- `public/schema/class-amfm-schema-merger.php` - Schema merging with byline module
 
 ### Data Files
-- `docs/schema/data/master-locations.json` - Master location database
+- `public/schema/data/master-locations.json` - Master location database
 
 ### Modified Files
 - `includes/class-amfm-bylines.php` - Added schema module loading and initialization

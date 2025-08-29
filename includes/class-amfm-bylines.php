@@ -130,7 +130,7 @@ class Amfm_Bylines {
 		/**
 		 * Schema module dependencies
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'docs/schema/class-amfm-schema-manager.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/schema/class-amfm-schema-manager.php';
 
 		$this->loader = new Amfm_Bylines_Loader();
 
